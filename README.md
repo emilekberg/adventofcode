@@ -1,1 +1,6 @@
-# adventofcode_2019
+# Advent of code 2019
+
+My try at solving the puzzles in the advent of code calender, using a language i'm not too familiar with, rust.
+
+see https://adventofcode.com/2019/
+
