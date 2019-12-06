@@ -154,7 +154,7 @@ fn get_value(memory: &mut Vec<i32>, param_mode: ParameterMode, memory_offset: us
   return result;
 }
 
-fn get_pos_to_store(memory: &mut Vec<i32>, param_mode: ParameterMode, memory_offset: usize) -> i32 {
+fn get_pos(memory: &mut Vec<i32>, param_mode: ParameterMode, memory_offset: usize) -> i32 {
   let result: i32 = match param_mode {
     ParameterMode::POSITION => {
       memory[memory_offset]
