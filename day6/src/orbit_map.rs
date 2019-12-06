@@ -35,10 +35,10 @@ impl OrbitMap {
     }
   }
 
-  pub fn get_total_num_of_orbits(self) -> i32 {
+  pub fn get_total_num_of_orbits(&self) -> i32 {
     let mut sum = 0;
     for (name, _) in &self.map {
-      sum += OrbitMap::get_orbits_for_body(&self, name);
+      sum += Self::get_orbits_for_body(&self, name);
     }
     return sum as i32;
   }
@@ -58,7 +58,7 @@ impl OrbitMap {
     return route_to_com;
   }
 
-  pub fn get_num_transfers_between(self, origin: String, target: String) -> i32 {
+  pub fn get_num_transfers_between(&self, origin: String, target: String) -> i32 {
     let you_body = self.map.get(&origin).unwrap();
     let santa_body = self.map.get(&target).unwrap();
 
