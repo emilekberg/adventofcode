@@ -1,61 +1,37 @@
 use std::fs;
-use std::fmt;
 use std::collections::HashMap;
-#[derive(PartialEq)]
-pub enum Direction {
-  Up,
-  Down,
-  Left,
-  Right,
-  Unknown,
-}
-
-#[derive(Hash, Eq, PartialEq, Debug)]
-pub struct Point {
-  x: i32,
-  y: i32,
-}
-
-
-impl fmt::Debug for Direction {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-      match *self {
-          Direction::Up => write!(f, "Up"),
-          Direction::Down => write!(f, "Down"),
-          Direction::Left => write!(f, "Left"),
-          Direction::Right => write!(f, "Right"),
-          Direction::Unknown => write!(f, "Unknown"),
-      }
-  }
-}
+mod direction;
+mod point;
+use direction::Direction;
+use point::Point;
 
 pub fn main() {
   let content = fs::read_to_string("./input.txt")
     .expect("something went wrong when reading fle");
-  let [len,steps] = calculate_manhattan_length(content, false);
-  println!("len: {}, steps: {}", len, steps);
+  let [len,steps] = calculate_manhattan_length(content);
+  println!("part 1: {}, part 2: {}", len, steps);
 }
 
-pub fn calculate_manhattan_length(s: String, use_steps: bool) -> [i32;2] {
+pub fn calculate_manhattan_length(s: String) -> [i32;2] {
   let mut map = HashMap::new();
   let mut map2 = HashMap::new();
   println!("{}", s);
-  let [a,b] = get_vectors(s);
+  let (a,b) = get_vectors(s);
 
   process_list(&mut map, a);
   process_list(&mut map2, b);
 
   let origo = Point{x: 0, y: 0};
   let mut prev_length = 100000000;
-  let mut _lowest_steps = 1000000000;
+  let mut lowest_steps = 1000000000;
   for (point, steps_a) in map {
     if map2.contains_key(&point) {
       let steps_b = map2.get(&point).unwrap();
       let len = get_manhattan_distance(&origo, &point);
       let steps = steps_a + steps_b;
 
-      if steps < _lowest_steps {
-        _lowest_steps = steps;
+      if steps < lowest_steps {
+        lowest_steps = steps;
         println!("{}", steps);
       }
 
@@ -66,7 +42,7 @@ pub fn calculate_manhattan_length(s: String, use_steps: bool) -> [i32;2] {
 
     }
   }
-  return [prev_length, _lowest_steps];
+  return [prev_length, lowest_steps];
 }
 
 pub fn process_list(map: &mut HashMap<Point, i32>, v: Vec<String>) {
@@ -95,7 +71,7 @@ pub fn get_manhattan_distance(p1: &Point, p2: &Point) -> i32 {
   return (p1.x-p2.x).abs() + (p1.y-p2.y).abs();
 }
 
-pub fn get_vectors(s: String) -> [Vec<String>; 2] {
+pub fn get_vectors(s: String) -> (Vec<String>, Vec<String>) {
   let mut inputs = s.lines();
   let a = inputs.next().unwrap();
   let b = inputs.next().unwrap();
@@ -103,10 +79,10 @@ pub fn get_vectors(s: String) -> [Vec<String>; 2] {
   let c = line_to_vec(a);
   let d = line_to_vec(b);
 
-  return [
+  return (
     c,
     d,
-  ];
+  );
 }
 
 pub fn line_to_vec(s: &str) -> Vec<String> {
@@ -148,7 +124,7 @@ mod tests {
   fn test_simple() {
     let input = "R8,U5,L5,D3
 U7,R6,D4,L4";
-    let [len,_] = calculate_manhattan_length(String::from(input), false);
+    let [len,_] = calculate_manhattan_length(String::from(input));
     assert_eq!(len, 6);
   }
 
@@ -157,7 +133,7 @@ U7,R6,D4,L4";
   fn test_first() {
     let input = "R75,D30,R83,U83,L12,D49,R71,U7,L72
 U62,R66,U55,R34,D71,R55,D58,R83";
-    let [len,_] = calculate_manhattan_length(String::from(input), false);
+    let [len,_] = calculate_manhattan_length(String::from(input));
     assert_eq!(len, 159);
   }
 
@@ -165,7 +141,7 @@ U62,R66,U55,R34,D71,R55,D58,R83";
   fn test_second() {
     let input = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51
 U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
-    let [len,_] = calculate_manhattan_length(String::from(input), false);
+    let [len,_] = calculate_manhattan_length(String::from(input));
     assert_eq!(len, 135);
   }
 
@@ -173,14 +149,14 @@ U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
   fn test_simple_steps() {
     let input = "R8,U5,L5,D3
 U7,R6,D4,L4";
-    let [_,steps] = calculate_manhattan_length(String::from(input), true);
+    let [_,steps] = calculate_manhattan_length(String::from(input));
     assert_eq!(steps, 30);
   }
   #[test]
   fn test_first_steps() {
     let input = "R75,D30,R83,U83,L12,D49,R71,U7,L72
 U62,R66,U55,R34,D71,R55,D58,R83";
-    let [_,steps] = calculate_manhattan_length(String::from(input), true);
+    let [_,steps] = calculate_manhattan_length(String::from(input));
     assert_eq!(steps, 610);
   }
 
@@ -188,7 +164,7 @@ U62,R66,U55,R34,D71,R55,D58,R83";
   fn test_second_steps() {
     let input = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51
 U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
-    let [_,steps] = calculate_manhattan_length(String::from(input), true);
+    let [_,steps] = calculate_manhattan_length(String::from(input));
     assert_eq!(steps, 410);
   }
 }
