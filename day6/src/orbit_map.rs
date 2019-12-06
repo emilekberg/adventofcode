@@ -14,16 +14,15 @@ impl OrbitMap {
       let result: Vec<&str> = row.split(")").collect();
       let parent_name = result[0].to_string();
       let child_name = result[1].to_string();
-      {
-        let parent = self.map.entry(parent_name.clone()).or_insert(body::new(parent_name.clone()));
-        parent.children.push(child_name.clone());
-      }
-      {
-        let child = self.map.entry(child_name.clone()).or_insert(body::new(child_name.clone()));
-        child.parent = parent_name.clone();
-      }
+      
+      let parent = self.map.entry(parent_name.clone()).or_insert(body::new(parent_name.clone()));
+      parent.children.push(child_name.clone());
+    
+      let child = self.map.entry(child_name.clone()).or_insert(body::new(child_name.clone()));
+      child.parent = parent_name.clone();
     }
   }
+
   pub fn get_orbits_for_body(&self, body_name: &String) -> i32 {
     let mut body = self.map.get(body_name).unwrap();
     let mut orbits = 0;
@@ -40,24 +39,20 @@ impl OrbitMap {
     let mut sum = 0;
     for (name, _) in &self.map {
       sum += OrbitMap::get_orbits_for_body(&self, name);
-      // sum += body.parent.len() + body.children.len();
     }
     return sum as i32;
   }
-  // 349
-
+  
   // gets the route to COM, returns a list of tuples with bodies and their respective distance from "name" body.
-  fn get_route_to_com(&self, body: &body::Body) -> Vec<(String, i32)> {
-    let mut route_to_com: Vec<(String,i32)> =  Vec::new();
+  fn get_route_to_com(&self, body: &body::Body) -> Vec<String> {
+    let mut route_to_com: Vec<String> =  Vec::new();
     let parent_body = self.map.get(&body.parent).unwrap();
     let mut body: &body::Body = parent_body;
-    let mut steps = 0;
     loop {
       if body.parent.is_empty()  {
         break;
       }
-      route_to_com.push((body.name.clone(), steps));
-      steps += 1;
+      route_to_com.push(body.name.clone());
       body = self.map.get(&body.parent).unwrap();
     }
     return route_to_com;
@@ -70,12 +65,12 @@ impl OrbitMap {
     let you_steps = Self::get_route_to_com(&self, &you_body);
     let santa_steps = Self::get_route_to_com(&self, &santa_body);
     // search for first shared parent, that is the closest route.
-    for (body, steps) in &you_steps {
-      for (search_body, santa_steps) in &santa_steps {
-        if body != search_body {
+    for (i, body) in you_steps.iter().enumerate() {
+      for (j, body2) in santa_steps.iter().enumerate() {
+        if body != body2 {
           continue;
         }
-        return steps + santa_steps;
+        return (i + j) as i32;
       }
     }
     return 0;
