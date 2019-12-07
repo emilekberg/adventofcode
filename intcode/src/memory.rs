@@ -10,6 +10,10 @@ pub fn new(ram: Vec<i32>) -> Memory {
   };
 }
 impl Memory {
+  pub fn output(&mut self, value: i32) {
+    self.out.push(value);
+  }
+
   pub fn set(&mut self, value: i32, offset: usize, mode: ParameterMode) {
     let pos = self.get_pos(offset,mode); 
     self.ram[pos] = value;
@@ -26,8 +30,12 @@ impl Memory {
     };
   }
 
-  pub fn get_ram(&self) -> Vec<i32> {
+  pub fn get_ram_clone(&self) -> Vec<i32> {
     return self.ram.clone();
+  }
+
+  pub fn get_output_clone(&self) -> Vec<i32> {
+    return self.out.clone();
   }
 }
 

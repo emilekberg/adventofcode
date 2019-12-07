@@ -9,126 +9,83 @@ mod memory;
 
 use operation::Operation;
 use parametermode::ParameterMode;
-use memory::Memory;
 
 pub fn run_program(in_mem: Vec<i32>) -> (i32, Vec<i32>, Vec<i32>) {
   let mut i = 0;
-  let mut output_list: Vec<i32> = Vec::new();
   let mut mem = memory::new(in_mem);
   loop {
-    let code = mem.get(i, ParameterMode::IMMEDIATE);    
-    let param_modes = utils::get_parameter_modes(code);
-    let instruction = utils::get_opcode(code);
-    println!("command: {:?}({}), ParameterModes: {:?},{:?},{:?}", instruction, code, param_modes[0], param_modes[1], param_modes[2]);
+    let code = mem.get(i, ParameterMode::IMMEDIATE);
+    let instruction = utils::get_operation(code);
+    println!("command: {:?}({})", instruction, code);
     
     match instruction {
-      Operation::Add => {
-        add(&mut mem, i, param_modes);
+      Operation::Add(p1m, p2m, p3m) => {
+        let result = mem.get(i + 1, p1m) + mem.get(i + 2, p2m);
+        mem.set(result, i+3, p3m);
         i += 4;
       },
-      Operation::Mul => {
-        mul(&mut mem, i, param_modes);
+      Operation::Mul(p1m, p2m, p3m) => {
+        let result = mem.get(i+1, p1m) * mem.get(i + 2, p2m);
+        mem.set(result, i+3, p3m);
         i += 4;
       },
-      Operation::Input => {
-        input(&mut mem, i, param_modes);
+      Operation::Input(p1m) => {
+        let result = input();
+        mem.set(result, i+1, p1m);
         i += 2;
       },
-      Operation::Output => {
-        let result = output(&mut mem, i, param_modes);
-        output_list.push(result);
+      Operation::Output(p1m) => {
+        let value = mem.get(i+1, p1m);
+        println!("----------------- OUTPUT: pos {}, value {} ----------------------", i+1, value);
+        mem.output(value);
         i += 2;
       },
-      Operation::JumpIfTrue => {
-        let result = jump_if_true(&mut mem, i, param_modes);
-        if result != 0 {
-          i = result as usize;
+      Operation::JumpIfTrue(p1m, p2m) => {
+        if mem.get(i+1, p1m) != 0 {
+          i = mem.get(i+2, p2m) as usize;
         } else {
           i += 3;
         }
       },
-      Operation::JumpIfFalse => {
-        let result = jump_if_false(&mut mem, i, param_modes);
-        if result != 0 {
-          i = result as usize;
+      Operation::JumpIfFalse(p1m, p2m) => {
+        if mem.get(i+1, p1m) == 0 {
+          i = mem.get(i+2, p2m) as usize;
         } else {
           i += 3;
         }
       },
-      Operation::LessThan => {
-        less_then(&mut mem, i, param_modes);
+      Operation::LessThan(p1m, p2m, p3m) => {
+        let result = match mem.get(i+1, p1m) < mem.get(i+2, p2m) {
+          true => 1,
+          false => 0,
+        };
+        mem.set(result, i+3, p3m);
         i += 4;
       },
-      Operation::Equals => {
-        equals(&mut mem, i, param_modes);
+      Operation::Equals(p1m, p2m, p3m) => {
+        let result = match mem.get(i+1, p1m) == mem.get(i+2, p2m) {
+          true => 1,
+          false => 0,
+        };
+        mem.set(result, i+3, p3m);
         i += 4;
       },
-
       Operation::Halt => {
-        println!("halt!");
-        // print(&memory);
-        return (mem.get(0, ParameterMode::IMMEDIATE), output_list, mem.get_ram());
+        return (mem.get(0, ParameterMode::IMMEDIATE), mem.get_output_clone(), mem.get_ram_clone());
       },
     }
   }}
-
-fn add(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) {
-  let result = mem.get(offset + 1, modes[2]) + mem.get(offset + 2, modes[1]);
-  mem.set(result, offset+3, modes[0]);
-}
-
-fn mul(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) {
-  let result = mem.get(offset + 1, modes[2]) * mem.get(offset + 2, modes[1]);
-  mem.set(result, offset+3, modes[0]);
-}
-
-fn input(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) {
-  let mut buffer = String::new();
-  let result: i32 = match io::stdin().read_line(&mut buffer) {
-    Ok(_) => {
-      buffer.trim().parse()
-        .expect("error while parsing number")
-    },
-    Err(error) => panic!(error),
-  };
-  mem.set(result, offset+1, modes[2]);
-}
-
-fn output(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) -> i32 {
-  let value = mem.get(offset+1, modes[2]);
-  println!("----------------- OUTPUT: pos {}, value {} ----------------------", offset+1, value);
-  return value;
-}
-
-fn jump_if_true(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) -> i32 {
-  if mem.get(offset+1, modes[2]) > 0 {
-    return mem.get(offset+2, modes[1]);
+  fn input() -> i32 {
+    let mut buffer = String::new();
+    let result: i32 = match io::stdin().read_line(&mut buffer) {
+      Ok(_) => {
+        buffer.trim().parse()
+          .expect("error while parsing number")
+      },
+      Err(error) => panic!(error),
+    };
+    return result;
   }
-  return 0;
-}
-
-fn jump_if_false(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) -> i32 {
-  if mem.get(offset+1, modes[2]) == 0 {
-    return mem.get(offset+2, modes[1]);
-  }
-  return 0;
-}
-
-fn less_then(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) {
-  let result = match mem.get(offset+1, modes[2]) < mem.get(offset+2, modes[1]) {
-    true => 1,
-    false => 0,
-  };
-  mem.set(result, offset+3, modes[0]);
-}
-
-fn equals(mem: &mut Memory, offset: usize, modes: [ParameterMode; 3]) {
-  let result = match mem.get(offset+1, modes[2]) == mem.get(offset+2, modes[1]) {
-    true => 1,
-    false => 0,
-  };
-  mem.set(result, offset+3, modes[0]);
-}
 #[cfg(test)]
 mod tests {
   use super::*;

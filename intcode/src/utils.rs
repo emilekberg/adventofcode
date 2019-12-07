@@ -22,6 +22,23 @@ pub fn get_tenth(num: i32) -> i32 {
   return result;
 }
 
+pub fn get_first_param(num: i32) -> ParameterMode {
+  return ParameterMode::from_i32(get_hundreds(num));
+}
+
+pub fn get_second_param(num: i32) -> ParameterMode {
+  return ParameterMode::from_i32(get_thousands(num));
+}
+
+pub fn get_third_param(num: i32) -> ParameterMode {
+  return ParameterMode::from_i32(get_ten_thousands(num));
+}
+
+pub fn get_opcode(num: i32) -> i32 {
+  return get_tenth(num);
+}
+
+
 pub fn get_parameter_modes(value: i32) -> [ParameterMode; 3] {
   return [
     ParameterMode::from_i32(get_ten_thousands(value)),
@@ -30,8 +47,19 @@ pub fn get_parameter_modes(value: i32) -> [ParameterMode; 3] {
   ]
 }
 
-pub fn get_opcode(value: i32) -> Operation {
-  return Operation::from_i32(get_tenth(value));
+pub fn get_operation(value: i32) -> Operation {
+  return match get_opcode(value) {
+    1 => Operation::Add(get_first_param(value), get_second_param(value), get_third_param(value)),
+    2 => Operation::Mul(get_first_param(value), get_second_param(value), get_third_param(value)),
+    3 => Operation::Input(get_first_param(value)),
+    4 => Operation::Output(get_first_param(value)),
+    5 => Operation::JumpIfTrue(get_first_param(value), get_second_param(value)),
+    6 => Operation::JumpIfFalse(get_first_param(value), get_second_param(value)),
+    7 => Operation::LessThan(get_first_param(value), get_second_param(value), get_third_param(value)),
+    8 => Operation::Equals(get_first_param(value), get_second_param(value), get_third_param(value)),
+    99 => Operation::Halt,
+    _ => panic!(),
+  };
 }
 
 #[cfg(test)]
