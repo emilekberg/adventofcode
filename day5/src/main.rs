@@ -6,7 +6,11 @@ fn main() {
     .split(",")
     .map(|x| x.parse().unwrap())
     .collect();
-  let (res, output, _) = intcode::run_program(memory);
+  let (res, output, _) = intcode::run_program(memory.clone(), || 1, |_| {});
   println!("first position: {}", res);
   println!("output last: {}", output.last().unwrap());
+  
+  let (res, output, _) = intcode::run_program(memory.clone(), || 5, |_| {});
+  println!("first position: {}", res);
+  println!("output last: {}", output.last().unwrap())
 }

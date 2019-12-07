@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use std::io;
-
+use std::option::Option;
 mod utils;
 mod operation;
 mod parametermode;
@@ -10,13 +10,13 @@ mod memory;
 use operation::Operation;
 use parametermode::ParameterMode;
 
-pub fn run_program(in_mem: Vec<i32>) -> (i32, Vec<i32>, Vec<i32>) {
+pub fn run_program<F: FnMut() -> i32+'static, F2: FnMut(i32) + 'static>(in_mem: Vec<i32>, mut input_cb: F, mut output_cb: F2) -> (i32, Vec<i32>, Vec<i32>) {
   let mut i = 0;
   let mut mem = memory::new(in_mem);
   loop {
     let code = mem.get(i, ParameterMode::IMMEDIATE);
     let instruction = utils::get_operation(code);
-    println!("command: {:?}({})", instruction, code);
+    // println!("command: {:?}({})", instruction, code);
     
     match instruction {
       Operation::Add(p1m, p2m, p3m) => {
@@ -30,7 +30,8 @@ pub fn run_program(in_mem: Vec<i32>) -> (i32, Vec<i32>, Vec<i32>) {
         i += 4;
       },
       Operation::Input(p1m) => {
-        let result = input();
+        // let result = input();
+        let result = input_cb();
         mem.set(result, i+1, p1m);
         i += 2;
       },
@@ -38,6 +39,7 @@ pub fn run_program(in_mem: Vec<i32>) -> (i32, Vec<i32>, Vec<i32>) {
         let value = mem.get(i+1, p1m);
         println!("----------------- OUTPUT: pos {}, value {} ----------------------", i+1, value);
         mem.output(value);
+        output_cb(value);
         i += 2;
       },
       Operation::JumpIfTrue(p1m, p2m) => {
@@ -71,6 +73,7 @@ pub fn run_program(in_mem: Vec<i32>) -> (i32, Vec<i32>, Vec<i32>) {
         i += 4;
       },
       Operation::Halt => {
+        println!("------------------- !!!! HALT !!!! --------------------"); 
         return (mem.get(0, ParameterMode::IMMEDIATE), mem.get_output_clone(), mem.get_ram_clone());
       },
     }
@@ -92,9 +95,9 @@ mod tests {
   
   #[test]
   fn test_run_program() {
-    let mut mem = vec![1002,4,3,4,33];
+    let mem = vec![1002,4,3,4,33];
     let expected = vec![1002,4,3,4,99];
-    let (res, _, mem2) = run_program(mem);
+    let (res, _, mem2) = run_program(mem, || 1);
     assert_eq!(res, 1002);
     assert_eq!(mem2, expected);
   }
