@@ -9,8 +9,7 @@
 			"path": "day5"
 		},
 		{
-			"name": "intcomp",
-			"path": "intcomp"
+			"path": "intcode"
 		}
 	],
 	"settings": {}
