@@ -19,7 +19,7 @@ fn set_verb_noun(memory: &mut Vec<i32>, verb: i32, noun: i32) -> &mut Vec<i32> {
 }
 
 fn part1(memory: &mut Vec<i32>) -> i32 {
-  let (result, _, _) = intcode::run_program(set_verb_noun(memory, 12, 2));
+  let (result, _, _) = intcode::run_program(set_verb_noun(memory, 12, 2).clone());
   return result;
 }
 
@@ -29,7 +29,7 @@ let search_for = 19690720;
   let mut verb = 0;
   loop {
 
-    let (result, _, _) = intcode::run_program(set_verb_noun(&mut memory.clone(), noun, verb));
+    let (result, _, _) = intcode::run_program(set_verb_noun(&mut memory.clone(), noun, verb).clone());
     if result == search_for {
       return 100*noun+verb;
     }

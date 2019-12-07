@@ -5,12 +5,12 @@
 			"path": "day5"
 		},
 		{
-			"name": "day2",
-			"path": "day2"
-		},
-		{
 			"name": "intcode",
 			"path": "intcode"
+		},
+		{
+			"name": "day2",
+			"path": "day2"
 		}
 	],
 	"settings": {}
