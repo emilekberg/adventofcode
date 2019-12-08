@@ -29,8 +29,7 @@ fn main() {
     let data: Vec<i32> = std::fs::read_to_string("./input.txt")
         .unwrap()
         .chars()
-        .map(|x| x.to_string())
-        .map(|x| x.parse().unwrap())
+        .map(|x| x.to_string().parse().unwrap())
         .collect();
     let mut image = Image::new(25,6);
     image.read_data(data);
@@ -41,12 +40,13 @@ fn main() {
 
 fn part1(image: &Image) {
 
-    let sum_a: Vec<i32> = image.layers.iter().cloned()
+    let sum_a: Vec<usize> = image.layers
+        .iter()
+        .cloned()
         .map(|x| x.iter()
             .cloned()
             .filter(|x| x.eq(&0))
-            .collect::<Vec<i32>>()
-            .len() as i32
+            .count()
         ).collect();
 
     // TODO: make this prettier;
@@ -73,10 +73,8 @@ fn part1(image: &Image) {
 }
 
 fn part2(image: &Image) {
-    let mut layers = image.layers.clone();
-    layers.reverse();
     let mut result = vec!["";image.width*image.height];
-    for layer in layers.iter() {
+    for layer in image.layers.iter().rev() {
         for (i, color) in layer.iter().enumerate() {
             match color {
                 // black
