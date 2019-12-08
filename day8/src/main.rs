@@ -40,28 +40,22 @@ fn main() {
 
 fn part1(image: &Image) {
 
-    let sum_a: Vec<usize> = image.layers
+    // creates an vector with number of zeroes as value, same index as the layers.
+    let num_zeroes: Vec<usize> = image.layers
         .iter()
-        .cloned()
-        .map(|x| x.iter()
+        .enumerate()
+        .map(|(_,x)| x.iter()
             .cloned()
             .filter(|x| x.eq(&0))
             .count()
         ).collect();
+    // finds the layer value with minimum zeroes.
+    let min_value = num_zeroes.iter().min().unwrap();
+    // finds the index of the minimum zeroes.
+    let min_index = num_zeroes.iter().position(|x| x == min_value).unwrap();
 
-    // TODO: make this prettier;
-    let mut max = 100000;
-    let mut max_index = 0 as usize;
-    for (i,n) in sum_a.iter().enumerate() {
-        if *n < max {
-            max_index = i;
-            max = *n;
-        }
-    }
-    
-    let (ones,twos) = image.layers[max_index]
+    let (ones,twos) = image.layers[min_index]
         .iter()
-        .cloned()
         .fold((0,0), |(ones,twos),n| {
             match n {
                 1 => return (ones + 1, twos),
