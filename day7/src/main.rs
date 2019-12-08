@@ -73,7 +73,7 @@ fn get_throttle_feedback(init_settings: &mut Vec<i32>, memory: Vec<i32>) -> i32 
     return *result.last().unwrap();
 }
 
-fn spawn_thread(id: i32, memory: Vec<i32>, rx: Receiver<i32>, tx: Sender<i32>) -> std::thread::JoinHandle<(i32)> {
+fn spawn_thread(_id: i32, memory: Vec<i32>, rx: Receiver<i32>, tx: Sender<i32>) -> std::thread::JoinHandle<(i32)> {
     return thread::spawn(move || {
         let (_,output,_) = intcode::run_program(memory.clone(), move || {
             let val = rx.recv().unwrap();
@@ -91,13 +91,7 @@ fn spawn_thread(id: i32, memory: Vec<i32>, rx: Receiver<i32>, tx: Sender<i32>) -
 
 fn generate_all_posibilities(allowed_numbers: Vec<i32>) -> Vec<Vec<i32>> {
     let mut result = Vec::new();
-    for i in 0..allowed_numbers.len() {
-        let mut new_phase = allowed_numbers.clone();
-        let phase = new_phase.remove(i);
-        let mut target = Vec::new();
-        target.push(phase);
-        gen_phases(&mut result, &mut target, &new_phase);
-    }
+    gen_phases(&mut result, &mut Vec::new(), &allowed_numbers);
     return result;
 }
 
