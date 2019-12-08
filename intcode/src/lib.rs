@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
 use std::io;
-use std::option::Option;
 mod utils;
 mod operation;
 mod parametermode;
@@ -97,7 +96,7 @@ mod tests {
   fn test_run_program() {
     let mem = vec![1002,4,3,4,33];
     let expected = vec![1002,4,3,4,99];
-    let (res, _, mem2) = run_program(mem, || 1);
+    let (res, _, mem2) = run_program(mem, || 1, |_| {});
     assert_eq!(res, 1002);
     assert_eq!(mem2, expected);
   }
