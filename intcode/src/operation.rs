@@ -10,21 +10,23 @@ pub enum Operation {
   JumpIfFalse(ParameterMode, ParameterMode),
   LessThan(ParameterMode, ParameterMode, ParameterMode),
   Equals(ParameterMode, ParameterMode, ParameterMode),
+  RelativeBaseOffset(ParameterMode),
   Halt,
 }
 
 impl fmt::Debug for Operation {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     match *self {
-      Operation::Add(_,_,_)          => write!(f, "ADD"),
-      Operation::Mul(_,_,_)          => write!(f, "MUL"),
-      Operation::Input(_)            => write!(f, "INPUT"),
-      Operation::Output(_)           => write!(f, "OUTPUT"),
-      Operation::JumpIfTrue(_,_)     => write!(f, "JUMP_IF_TRUE"),
-      Operation::JumpIfFalse(_,_)    => write!(f, "JUMP_IF_FALSE"),
-      Operation::LessThan(_,_,_)     => write!(f, "LESS_THEN"),
-      Operation::Equals(_,_,_)       => write!(f, "EQUALS"),
-      Operation::Halt                => write!(f, "HALT"),
+      Operation::Add(_,_,_)            => write!(f, "ADD"),
+      Operation::Mul(_,_,_)            => write!(f, "MUL"),
+      Operation::Input(_)              => write!(f, "IN"),
+      Operation::Output(_)             => write!(f, "OUT"),
+      Operation::JumpIfTrue(_,_)       => write!(f, "JUMP_IF_TRUE"),
+      Operation::JumpIfFalse(_,_)      => write!(f, "JUMP_IF_FALSE"),
+      Operation::LessThan(_,_,_)       => write!(f, "LT"),
+      Operation::Equals(_,_,_)         => write!(f, "EQ"),
+      Operation::RelativeBaseOffset(_) => write!(f, "SET_RELATIVE_BASE"),
+      Operation::Halt                  => write!(f, "HALT"),
     }
   }
 }

@@ -1,37 +1,37 @@
 use super::operation::Operation;
 use super::parametermode::ParameterMode;
 
-pub fn get_tenth(num: i32) -> i32 {
-  let to_subtract: i32 = (num / 100) * 100;
-  let result: i32 = num - to_subtract;
+pub fn get_tenth(num: i64) -> i64 {
+  let to_subtract: i64 = (num / 100) * 100;
+  let result: i64 = num - to_subtract;
   return result;
 }
 
 /// returns the nth number in within a number.
 /// example: 12345, 3 is the 2nd number (index from the right);
-pub fn get_nth(num: i32, n: u32) -> i32 {
-  let div = (10u32).pow(n) as i32;
+pub fn get_nth(num: i64, n: u32) -> i64 {
+  let div = (10u32).pow(n) as i64;
   let result = (num / div) % 10;
   return result;
 }
 
-pub fn get_first_param(num: i32) -> ParameterMode {
-  return ParameterMode::from_i32(get_nth(num, 2));
+pub fn get_first_param(num: i64) -> ParameterMode {
+  return ParameterMode::from_i64(get_nth(num, 2));
 }
 
-pub fn get_second_param(num: i32) -> ParameterMode {
-  return ParameterMode::from_i32(get_nth(num, 3));
+pub fn get_second_param(num: i64) -> ParameterMode {
+  return ParameterMode::from_i64(get_nth(num, 3));
 }
 
-pub fn get_third_param(num: i32) -> ParameterMode {
-  return ParameterMode::from_i32(get_nth(num, 4));
+pub fn get_third_param(num: i64) -> ParameterMode {
+  return ParameterMode::from_i64(get_nth(num, 4));
 }
 
-pub fn get_opcode(num: i32) -> i32 {
+pub fn get_opcode(num: i64) -> i64 {
   return get_tenth(num);
 }
 
-pub fn get_operation(value: i32) -> Operation {
+pub fn get_operation(value: i64) -> Operation {
   return match get_opcode(value) {
     1 => Operation::Add(get_first_param(value), get_second_param(value), get_third_param(value)),
     2 => Operation::Mul(get_first_param(value), get_second_param(value), get_third_param(value)),
@@ -41,6 +41,7 @@ pub fn get_operation(value: i32) -> Operation {
     6 => Operation::JumpIfFalse(get_first_param(value), get_second_param(value)),
     7 => Operation::LessThan(get_first_param(value), get_second_param(value), get_third_param(value)),
     8 => Operation::Equals(get_first_param(value), get_second_param(value), get_third_param(value)),
+    9 => Operation::RelativeBaseOffset(get_first_param(value)),
     99 => Operation::Halt,
     _ => panic!(),
   };

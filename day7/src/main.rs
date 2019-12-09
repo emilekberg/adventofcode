@@ -2,7 +2,7 @@ extern crate intcode;
 use std::thread;
 use std::sync::mpsc::*;
 fn main() {
-    let memory: Vec<i32> = std::fs::read_to_string("./input.txt")
+    let memory: Vec<i64> = std::fs::read_to_string("./input.txt")
         .unwrap()
         .split(",")
         .map(|x| x.parse().unwrap())
@@ -15,7 +15,7 @@ fn main() {
 
 }
 
-fn part1(memory: Vec<i32>) -> i32 {
+fn part1(memory: Vec<i64>) -> i64 {
     let mut max = 0;
     let posibilities = generate_all_posibilities(vec![0,1,2,3,4]);
     for setting in posibilities {
@@ -27,7 +27,7 @@ fn part1(memory: Vec<i32>) -> i32 {
     return max;
 }
 
-pub fn get_throttle(init_settings: &mut Vec<i32>, memory: Vec<i32>) -> i32 {
+pub fn get_throttle(init_settings: &mut Vec<i64>, memory: Vec<i64>) -> i64 {
     let mut prev_input = 0;
     for _ in 0..5 {
         let mut data = vec![init_settings.remove(0), prev_input];
@@ -37,7 +37,7 @@ pub fn get_throttle(init_settings: &mut Vec<i32>, memory: Vec<i32>) -> i32 {
     return prev_input;
 }
 
-fn part2(memory: Vec<i32>) -> i32 {
+fn part2(memory: Vec<i64>) -> i64 {
     let mut max = 0;
     let posibilities = generate_all_posibilities(vec![5,6,7,8,9]);
     for setting in posibilities {
@@ -49,13 +49,13 @@ fn part2(memory: Vec<i32>) -> i32 {
     return max;
 }
 
-fn get_throttle_feedback(init_settings: &mut Vec<i32>, memory: Vec<i32>) -> i32 {
+fn get_throttle_feedback(init_settings: &mut Vec<i64>, memory: Vec<i64>) -> i64 {
     let mut threads = vec![];
-    let (tx_5, rx_1) = std::sync::mpsc::channel::<i32>();
-    let (tx_1, rx_2) = std::sync::mpsc::channel::<i32>();
-    let (tx_2, rx_3) = std::sync::mpsc::channel::<i32>();
-    let (tx_3, rx_4) = std::sync::mpsc::channel::<i32>();
-    let (tx_4, rx_5) = std::sync::mpsc::channel::<i32>();
+    let (tx_5, rx_1) = std::sync::mpsc::channel::<i64>();
+    let (tx_1, rx_2) = std::sync::mpsc::channel::<i64>();
+    let (tx_2, rx_3) = std::sync::mpsc::channel::<i64>();
+    let (tx_3, rx_4) = std::sync::mpsc::channel::<i64>();
+    let (tx_4, rx_5) = std::sync::mpsc::channel::<i64>();
     tx_5.send(init_settings[0]).unwrap();
     tx_1.send(init_settings[1]).unwrap();
     tx_2.send(init_settings[2]).unwrap();
@@ -69,11 +69,11 @@ fn get_throttle_feedback(init_settings: &mut Vec<i32>, memory: Vec<i32>) -> i32 
     threads.push(spawn_thread(4,memory.clone(), rx_4, tx_4));
     threads.push(spawn_thread(5,memory.clone(), rx_5, tx_5));
 
-    let result: Vec<i32> = threads.into_iter().map(|thread| thread.join().unwrap()).collect();
+    let result: Vec<i64> = threads.into_iter().map(|thread| thread.join().unwrap()).collect();
     return *result.last().unwrap();
 }
 
-fn spawn_thread(_id: i32, memory: Vec<i32>, rx: Receiver<i32>, tx: Sender<i32>) -> std::thread::JoinHandle<(i32)> {
+fn spawn_thread(_id: i32, memory: Vec<i64>, rx: Receiver<i64>, tx: Sender<i64>) -> std::thread::JoinHandle<(i64)> {
     return thread::spawn(move || {
         let (_,output,_) = intcode::run_program(memory.clone(), move || {
             let val = rx.recv().unwrap();
@@ -89,13 +89,13 @@ fn spawn_thread(_id: i32, memory: Vec<i32>, rx: Receiver<i32>, tx: Sender<i32>) 
     });
 } 
 
-fn generate_all_posibilities(allowed_numbers: Vec<i32>) -> Vec<Vec<i32>> {
+fn generate_all_posibilities(allowed_numbers: Vec<i64>) -> Vec<Vec<i64>> {
     let mut result = Vec::new();
     gen_phases(&mut result, &mut Vec::new(), &allowed_numbers);
     return result;
 }
 
-fn gen_phases(result: &mut Vec<Vec<i32>>, target: &mut Vec<i32>, phases: &Vec<i32>) {
+fn gen_phases(result: &mut Vec<Vec<i64>>, target: &mut Vec<i64>, phases: &Vec<i64>) {
     if phases.len() == 0 {
         result.push(target.clone());
     }

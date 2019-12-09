@@ -1,21 +1,22 @@
 #![allow(dead_code)]
 
-use std::io;
-mod utils;
-mod operation;
-mod parametermode;
-mod memory;
+pub mod utils;
+pub mod operation;
+pub mod parametermode;
+pub mod memory;
 
 use operation::Operation;
 use parametermode::ParameterMode;
 
-pub fn run_program<F: FnMut() -> i32+'static, F2: FnMut(i32) + 'static>(in_mem: Vec<i32>, mut input_cb: F, mut output_cb: F2) -> (i32, Vec<i32>, Vec<i32>) {
+
+
+pub fn run_program<F: FnMut() -> i64+'static, F2: FnMut(i64) + 'static>(in_mem: Vec<i64>, mut input_cb: F, mut output_cb: F2) -> (i64, Vec<i64>, Vec<i64>) {
   let mut i = 0;
   let mut mem = memory::new(in_mem);
   loop {
     let code = mem.get(i, ParameterMode::IMMEDIATE);
     let instruction = utils::get_operation(code);
-    // println!("command: {:?}({})", instruction, code);
+    // println!("{}\t:: command: {:?}({})", i, instruction, code);
     
     match instruction {
       Operation::Add(p1m, p2m, p3m) => {
@@ -29,14 +30,14 @@ pub fn run_program<F: FnMut() -> i32+'static, F2: FnMut(i32) + 'static>(in_mem: 
         i += 4;
       },
       Operation::Input(p1m) => {
-        // let result = input();
         let result = input_cb();
+        println!("----------------- INPUT: value {} ----------------------", result);
         mem.set(result, i+1, p1m);
         i += 2;
       },
       Operation::Output(p1m) => {
         let value = mem.get(i+1, p1m);
-        println!("----------------- OUTPUT: pos {}, value {} ----------------------", i+1, value);
+        println!("----------------- OUTPUT: value {} ----------------------", value);
         mem.output(value);
         output_cb(value);
         i += 2;
@@ -71,24 +72,19 @@ pub fn run_program<F: FnMut() -> i32+'static, F2: FnMut(i32) + 'static>(in_mem: 
         mem.set(result, i+3, p3m);
         i += 4;
       },
+      Operation::RelativeBaseOffset(p1m) => {
+        mem.offset_relative_base(mem.get(i+1, p1m));
+        i += 2;
+      },
       Operation::Halt => {
         println!("------------------- !!!! HALT !!!! --------------------"); 
         return (mem.get(0, ParameterMode::IMMEDIATE), mem.get_output_clone(), mem.get_ram_clone());
       },
     }
-  }}
-  fn input() -> i32 {
-    let mut buffer = String::new();
-    let result: i32 = match io::stdin().read_line(&mut buffer) {
-      Ok(_) => {
-        buffer.trim().parse()
-          .expect("error while parsing number")
-      },
-      Err(error) => panic!(error),
-    };
-    return result;
   }
-#[cfg(test)]
+}
+
+  #[cfg(test)]
 mod tests {
   use super::*;
   
@@ -100,4 +96,6 @@ mod tests {
     assert_eq!(res, 1002);
     assert_eq!(mem2, expected);
   }
+
+
 }

@@ -1,7 +1,7 @@
 extern crate intcode;
 
 fn main() {
-  let memory: Vec<i32> = std::fs::read_to_string("./input.txt")
+  let memory: Vec<i64> = std::fs::read_to_string("./input.txt")
     .unwrap()
     .split(",")
     .map(|x| x.parse().unwrap())

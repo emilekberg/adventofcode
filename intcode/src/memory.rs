@@ -1,41 +1,51 @@
 use super::parametermode::ParameterMode;
 pub struct Memory {
-  ram: Vec<i32>,
-  out: Vec<i32>,
+  ram: Vec<i64>,
+  out: Vec<i64>,
+  relative_base: i64,
 }
-pub fn new(ram: Vec<i32>) -> Memory {
+pub fn new(mut ram: Vec<i64>) -> Memory {
+  ram.resize(10000, 0);
   return Memory {
     ram,
     out: Vec::new(),
+    relative_base: 0,
   };
 }
 impl Memory {
-  pub fn output(&mut self, value: i32) {
+  pub fn output(&mut self, value: i64) {
     self.out.push(value);
   }
 
-  pub fn set(&mut self, value: i32, offset: usize, mode: ParameterMode) {
+  pub fn set(&mut self, value: i64, offset: usize, mode: ParameterMode) {
     let pos = self.get_pos(offset,mode); 
     self.ram[pos] = value;
   }
 
-  pub fn get(&self, offset: usize, mode: ParameterMode) -> i32 {
-    return self.ram[self.get_pos(offset, mode)];
+  pub fn get(&self, offset: usize, mode: ParameterMode) -> i64 {
+    let pos = self.get_pos(offset, mode);
+    // println!("pos: {},{},{}", pos, self.relative_base, offset);
+    return self.ram[pos];
   }
 
   pub fn get_pos(&self, offset: usize, mode: ParameterMode) -> usize {
     return match mode {
       ParameterMode::POSITION => self.ram[offset] as usize,
       ParameterMode::IMMEDIATE => offset,
+      ParameterMode::RELATIVE => (self.ram[offset] + self.relative_base) as usize,
     };
   }
 
-  pub fn get_ram_clone(&self) -> Vec<i32> {
+  pub fn get_ram_clone(&self) -> Vec<i64> {
     return self.ram.clone();
   }
 
-  pub fn get_output_clone(&self) -> Vec<i32> {
+  pub fn get_output_clone(&self) -> Vec<i64> {
     return self.out.clone();
+  }
+
+  pub fn offset_relative_base(&mut self, relative_base: i64) {
+    self.relative_base += relative_base;
   }
 }
 
