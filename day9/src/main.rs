@@ -17,9 +17,10 @@ fn part1(memory: &Vec<i64>) {
 }
 
 fn part2(memory: &Vec<i64>) {
+    let now = std::time::Instant::now();
     let (_,output,_) = intcode::run_program(memory.clone(), || 2, |_| {});
     let boost_keycode = *output.last().unwrap();
-    println!("part2: {}", boost_keycode);
+    println!("part2: {}, {}", boost_keycode, now.elapsed().as_secs_f64());
 }
 #[cfg(test)]
 mod tests {

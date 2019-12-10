@@ -12,5 +12,6 @@ fn main() {
   
   let (res, output, _) = intcode::run_program(memory.clone(), || 5, |_| {});
   println!("first position: {}", res);
-  println!("output last: {}", output.last().unwrap())
+  println!("output last: {}", output.last().unwrap());
+
 }

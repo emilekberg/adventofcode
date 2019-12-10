@@ -31,13 +31,11 @@ pub fn run_program<F: FnMut() -> i64+'static, F2: FnMut(i64) + 'static>(in_mem: 
       },
       Operation::Input(p1m) => {
         let result = input_cb();
-        println!("----------------- INPUT: value {} ----------------------", result);
         mem.set(result, i+1, p1m);
         i += 2;
       },
       Operation::Output(p1m) => {
         let value = mem.get(i+1, p1m);
-        println!("----------------- OUTPUT: value {} ----------------------", value);
         mem.output(value);
         output_cb(value);
         i += 2;
@@ -77,7 +75,6 @@ pub fn run_program<F: FnMut() -> i64+'static, F2: FnMut(i64) + 'static>(in_mem: 
         i += 2;
       },
       Operation::Halt => {
-        println!("------------------- !!!! HALT !!!! --------------------"); 
         return (mem.get(0, ParameterMode::IMMEDIATE), mem.get_output_clone(), mem.get_ram_clone());
       },
     }
