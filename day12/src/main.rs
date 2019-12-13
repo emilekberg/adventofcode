@@ -1,18 +1,14 @@
 extern crate utils;
 extern crate regex;
-
-mod moon;
-use std::collections::HashSet;
+extern crate num; 
 
 fn main() {
     let content = std::fs::read_to_string("./input.txt").unwrap();
-    // let reg = regex::Regex::new(r"\d+x=(-?\d+), y=(-?\d+), z=(-?\d+)").unwrap();
     let reg = regex::Regex::new(r"<x=(-?\d*),? y=(-?\d*),? z=(-?\d*)>").unwrap();
 
     let mut moons: [([i32;3],[i32;3]);4] = [([0,0,0],[0,0,0]);4];
     let mut i = 0;
     for cap in reg.captures_iter(&content) {
-        //println!("{}", cap.len());
         let x = &cap[1].parse::<i32>().unwrap();
         let y = &cap[2].parse::<i32>().unwrap();
         let z = &cap[3].parse::<i32>().unwrap();
@@ -21,8 +17,8 @@ fn main() {
         i += 1;
     }
 
-    part1(moons.clone());
-    // part2(moons.clone());
+     part1(moons.clone());
+    part2(moons.clone());
 
 
 
@@ -38,12 +34,10 @@ fn part1(mut moons: [([i32;3],[i32;3]);4]) {
                 continue;
             }
             moons_combinations.push((i,j));
-            println!("{},{}", i,j);
         }
     }
     loop {
         if loops == 1000 {
-            println!("after {} loops:", loops);
             break;
         }
         for (i,j) in &moons_combinations {
@@ -74,36 +68,45 @@ fn part1(mut moons: [([i32;3],[i32;3]);4]) {
     }
     println!("total: {}", sum);
 }
-//  233000000 was max i reached
+
 fn part2(moons: [([i32;3],[i32;3]);4]) {
     do_logic(moons);
 }
 
 fn do_logic(mut moons: [([i32;3],[i32;3]);4]) {
     let mut loops = 0i64; 
-    let init_state = moons.clone();
     let mut moons_combinations = vec![];
+    let initial = moons.clone();
+    let mut periods = [0i64;3];
     for i in 0..moons.len() {
         for j in i..moons.len() {
             if i == j {
                 continue;
             }
             moons_combinations.push((i,j));
-            println!("{},{}", i,j);
         }
     }
-
-    // moon 0 loop is 462 
-
     loop {
-
-        // println!("after {} steps", loops);
-        for (i, moon) in moons.iter().enumerate() {
-            if moon.1 == [0;3] {
-                println!("moon {} velocity is 0 in step {}", i, loops);
-                break;
+        let mut all_has_values = true;
+        for j in 0..3 {
+            all_has_values = all_has_values && periods[j] != 0;
+            if periods[j] != 0 || loops == 0 {
+                continue;
             }
-            // print_moon(moon);
+            let mut all_moons_equal_axis = true;
+            for i in 0..4 {
+                if !(moons[i].0[j] == initial[i].0[j] && moons[i].1[j] == initial[i].1[j])  {
+                    all_moons_equal_axis = false;
+                }
+            }
+            if all_moons_equal_axis {
+                periods[j] = loops;
+            }
+
+        }
+        if all_has_values {
+            println!("has all steps after {}", loops);
+            break;
         }
 
         for (i,j) in &moons_combinations {
@@ -123,16 +126,11 @@ fn do_logic(mut moons: [([i32;3],[i32;3]);4]) {
             moon.0[2] += moon.1[2]
         }
         loops += 1;
-        if moons == init_state {
-            println!("{}", loops);
-            break;
-        }
     }
-}
+    for (i,p) in periods.iter().enumerate() {
+        println!("{},{}", i,p);
+    }
 
-fn print_moon(moon: &([i32;3],[i32;3])) {
-    println!("pos: {},{},{} vel {},{},{}", 
-        moon.0[0], moon.0[1], moon.0[2],
-        moon.1[0], moon.1[1], moon.1[2]
-    );
+    let sum: i64 = periods.iter().fold(1i64, |acc, period| num::integer::lcm(acc, *period));
+    println!("sum: {}", sum);
 }
