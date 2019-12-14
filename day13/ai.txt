@@ -1,0 +1,54 @@
+01105,
+      1,
+      6,
+    0,          // mem_in ball x
+    0,          // mem_in paddle x
+    0,          // temp bool for holding result of query
+    10003, 
+        3,       // input ball x
+    10003, 
+        4,        // input paddle x
+    1008,
+        3,
+        99,
+        5,
+    1005,
+        5,
+        59,
+    7,        // LT 
+        3, 
+        4, 
+        5, // if ball x > paddle x, store 1 in bool
+    1005, 
+        5,
+        37,
+    7,
+        4,
+        3,
+        5,
+    1005,
+        5,
+        42,
+    8,
+        4,
+        3,
+        5,
+    1005,
+        5,
+        47,
+    11104,  // output 1
+      -1,
+    11105,  // jump to start 
+      1, 
+      0,
+    11104,  // output -1
+      1,
+    11105,  // jump to start
+      1,
+      0,
+    11104,  // output 0
+      0,
+    11105,  // jump to start
+      1,
+      0,
+    99,

@@ -6,6 +6,8 @@ use std::io;
 use std::io::Write;
 
 use termion::raw::IntoRawMode;
+
+mod ai;
 fn main() {
 
     let mut memory: Vec<i64> = std::fs::read_to_string("./input.txt")
@@ -14,18 +16,22 @@ fn main() {
         .map(|x| x.parse::<i64>().unwrap())
         .collect();
     memory[0] = 2;
-    let (input_sender,input_receiver) = std::sync::mpsc::channel::<i64>();
-    let (output_sender,output_receiver) = std::sync::mpsc::channel::<i64>();
+    let (input_sender,input_receiver) = channel::<i64>();
+    let (output_sender,output_receiver) = channel::<i64>();
     println!("starting game");
-    let mut stdout = io::stdout().into_raw_mode().unwrap();
-    let game_thread = start_game_on_new_thread(memory.clone(), output_sender, input_receiver);
+
+
+    let (ai_in, ai_out, ai_thread) = ai::create();
+    let game_thread = intcode::run_async(memory.clone(), input_receiver, output_sender);
+
     println!("game started.");
-    // let mut display = std::collections::HashMap::new();
+    let mut stdout = io::stdout().into_raw_mode().unwrap();
     let mut score = 0;
     clear_screen();
 
     let wait_time = std::time::Duration::from_millis(2);
     let mut last_paddle_pos = (0,0);
+    println!("start game loop");
     loop {
         let x_rec = output_receiver.recv();
         let y_rec = output_receiver.recv();
@@ -47,59 +53,72 @@ fn main() {
                 termion::cursor::Goto(0,24),
                 score.to_string()
             ).unwrap();
+            stdout.lock().flush().unwrap();
             continue;
         }
 
-        let sign = match id {
-            0 => " ",
-            1 => "#",
-            2 => ".",
-            3 => "=",
-            4 => "@",
-            _ => continue,
-        };
-
         if id == 3 {
-            last_paddle_pos.0 = x;
-            last_paddle_pos.1 = y;
+            last_paddle_pos = (x,y);
         }
         if id == 4 {
-            if last_paddle_pos.0 < x {
-                input_sender.send(1).unwrap_or_default();
-            } else if last_paddle_pos.0 > x {
-                input_sender.send(-1).unwrap_or_default();
-            } else {
-                input_sender.send(0).unwrap_or_default();
-            }
+            ai_in.send(x).unwrap_or_default();
+            ai_in.send(last_paddle_pos.0).unwrap_or_default();
+            let ai_response = ai_out.recv().unwrap();
+            input_sender.send(ai_response).unwrap();
         }
+        
+ 
 
-
+        let sign = match id {
+            0 => " ",
+            1 => "◻️",
+            2 => "◼️",
+            3 => "➖",
+            4 => "💍",
+            _ => continue,
+        };
         write!(
             stdout,
             "{}{}",
-            termion::cursor::Goto(x as u16,y as u16),
+            termion::cursor::Goto((x+1) as u16,(y+1) as u16),
             sign
         ).unwrap();
         stdout.lock().flush().unwrap();
         thread::sleep(wait_time);
     }
+    ai_in.send(99).unwrap();
+
+    game_thread.join().unwrap();
+    ai_thread.join().unwrap();
+
+
     println!("{}", score);
 
 }
 fn clear_screen() {
     print!("{}[2J", 27 as char);
 }
-fn start_game_on_new_thread(memory: Vec<i64>, output: Sender<i64>, input: Receiver<i64>) -> std::thread::JoinHandle<()> {
-    return thread::spawn(move || {
-        intcode::run_program(memory.clone(), move || {
-            let result = input.recv();
-            if result.is_err() {
-                return 0;
-            }
-            return result.unwrap();
-            
-        }, move |o| {
-            output.send(o).unwrap_or_default();
-        });
-    });
-}
+
+
+
+/*
+
+AI
+#START
+INPUT TO A
+INPUT TO B
+IF A > B 
+  JMP OUTPUT 1
+IF A < B
+  JMP OUTPUT -1
+IF A == B
+  JMP OUTPUT 0
+OUTPUT 1
+JMP #START
+OUTPUT -1
+JMP #START
+OUTPUT 0
+JMP #START
+*/
+
+
