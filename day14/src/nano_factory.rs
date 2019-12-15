@@ -51,6 +51,7 @@ impl NanoFactory {
   }
   pub fn produce(&mut self, material: String, amount: i64) {
     let mut to_produce = amount - self.get_available_materials(material.clone());
+    let multiplier = amount / self.reactions[&material].produces; 
     if material == "ORE" {
       self.require_ore(to_produce);
       return;
@@ -68,5 +69,9 @@ impl NanoFactory {
     if to_produce < 0 {
       *self.available_materials.entry(material).or_insert(0) += 0-to_produce;
     }
+  }
+  pub fn clear(&mut self) {
+    self.required_ore =0;
+    self.available_materials.clear();
   }
 }

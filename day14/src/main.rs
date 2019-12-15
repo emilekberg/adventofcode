@@ -16,16 +16,38 @@ fn part1(map: &HashMap<(i64, String), Vec<(i64, String)>>) {
   let mut factory = nano_factory::new(map.clone());
   factory.produce(String::from("FUEL"), 1);
   println!("Part1: {}", factory.required_ore);
+  println!("{}",  1000000000000f64 / factory.required_ore as f64);
 }
 
 fn part2(map: &HashMap<(i64, String), Vec<(i64, String)>>) {
   println!("part 2");
-  for i in 0..10 {
-    let mut factory = nano_factory::new(map.clone());
-    factory.produce(String::from("FUEL"), i * 100);
-    println!("{}", factory.required_ore);
+  let max = 1000000000000i64;
+  let mut factory = nano_factory::new(map.clone());
+  factory.produce(String::from("FUEL"), 1);
+  let mut high = (max as f64 / factory.required_ore as f64).ceil() as i64; 
+  factory.clear();
+
+  let mut low = 1;
+  let mut i = 1;
+  loop {
+    i = low + ((high - low) / 2);
+    println!("trying with {}", i);
+    factory.produce(String::from("FUEL"), i);
+    if factory.required_ore > max {
+      println!("high! {}", i);
+      high = i;
+    }
+    else if factory.required_ore < max {
+      println!("low! {}", i);
+      low = i;
+    } else {
+      break;
+    }
+    factory.clear();
   }
 
+
+  println!("Done {}", i);
 }
 
 fn get_map_from_string(s: String) -> HashMap<(i64, String), Vec<(i64, String)>> {
