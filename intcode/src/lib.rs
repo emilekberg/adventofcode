@@ -7,17 +7,31 @@ pub mod memory;
 
 use operation::Operation;
 use parametermode::ParameterMode;
+use std::sync::mpsc::*;
 
-
-
+pub fn run_async(memory: Vec<i64>, input: Receiver<i64>, output: Sender<i64>) -> std::thread::JoinHandle<()> {
+  std::thread::spawn(move || {
+    run_program(memory, move || {
+      let result = input.recv();
+      if result.is_ok() {
+        return result.unwrap();
+      } else {
+        panic!();
+      }
+    }, move |value| {
+      output.send(value).unwrap_or_default();
+    });
+  })
+}
 pub fn run_program<F: FnMut() -> i64+'static, F2: FnMut(i64) + 'static>(in_mem: Vec<i64>, mut input_cb: F, mut output_cb: F2) -> (i64, Vec<i64>, Vec<i64>) {
   let mut i = 0;
   let mut mem = memory::new(in_mem);
   loop {
+    // println!("STEP: {}", i);
     let code = mem.get(i, ParameterMode::IMMEDIATE);
     let instruction = utils::get_operation(code);
     // println!("{}\t:: command: {:?}({})", i, instruction, code);
-    
+     
     match instruction {
       Operation::Add(p1m, p2m, p3m) => {
         let result = mem.get(i + 1, p1m) + mem.get(i + 2, p2m);

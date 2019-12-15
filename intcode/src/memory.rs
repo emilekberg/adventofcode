@@ -18,13 +18,12 @@ impl Memory {
   }
 
   pub fn set(&mut self, value: i64, offset: usize, mode: ParameterMode) {
-    let pos = self.get_pos(offset,mode); 
+    let pos = self.get_pos(offset,mode);
     self.ram[pos] = value;
   }
 
   pub fn get(&self, offset: usize, mode: ParameterMode) -> i64 {
     let pos = self.get_pos(offset, mode);
-    // println!("pos: {},{},{}", pos, self.relative_base, offset);
     return self.ram[pos];
   }
 
