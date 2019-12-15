@@ -20,7 +20,6 @@ fn main() {
     let (output_sender,output_receiver) = channel::<i64>();
     println!("starting game");
 
-
     let (ai_in, ai_out, ai_thread) = ai::create();
     let game_thread = intcode::run_async(memory.clone(), input_receiver, output_sender);
 
@@ -29,8 +28,7 @@ fn main() {
     let mut score = 0;
     clear_screen();
 
-    let wait_time = std::time::Duration::from_millis(2);
-    let mut last_paddle_pos = (0,0);
+    let wait_time = std::time::Duration::from_millis(1);
     println!("start game loop");
     loop {
         let x_rec = output_receiver.recv();
@@ -43,6 +41,10 @@ fn main() {
         let x = x_rec.unwrap();
         let y = y_rec.unwrap();
         let id = id_rec.unwrap();
+
+        ai_in.send(x).unwrap();
+        ai_in.send(y).unwrap();
+        ai_in.send(id).unwrap();
 
         // score overrides id.
         if x == -1 && y == 0 {
@@ -57,18 +59,11 @@ fn main() {
             continue;
         }
 
-        if id == 3 {
-            last_paddle_pos = (x,y);
-        }
         if id == 4 {
-            ai_in.send(x).unwrap_or_default();
-            ai_in.send(last_paddle_pos.0).unwrap_or_default();
             let ai_response = ai_out.recv().unwrap();
             input_sender.send(ai_response).unwrap();
         }
         
- 
-
         let sign = match id {
             0 => " ",
             1 => "◻️",
@@ -86,6 +81,7 @@ fn main() {
         stdout.lock().flush().unwrap();
         thread::sleep(wait_time);
     }
+    // tell AI to halt.
     ai_in.send(99).unwrap();
 
     game_thread.join().unwrap();

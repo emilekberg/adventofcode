@@ -1,0 +1,79 @@
+    10003,
+    74,
+1008,
+    74,
+    99,
+    78,
+1005,
+    78,
+    73,// HALT POSITION
+10003,
+    75,
+10003,
+    76,
+1008,   // IF PADDLE
+    76,
+    3,
+    77, 
+1005,   // JUMP TO PADDLE STORE
+    77,
+    30, 
+1008,   // IF BALL
+    76,
+    4,
+    77, 
+1005,   // JUMP TO BALL POSITION PROCESS
+    77,
+    37, 
+11005,  // JUMP TO START IF IT IS SOMETHING ELSE
+    1,
+    0,
+01001,  // STORE PADDLE IN PADDLE X POS
+    74,
+    0,
+    78,
+11005,  // JUMP TO START
+    1,
+    0,
+7,      // BALL < PADDLE
+    74,
+    78,
+    77,
+1005,
+    77,
+    58, // JMP TO OUTPUT  
+7,      // BALL > PADDLE
+    78,
+    74,
+    77,
+1005,
+    77,
+    63,  // IF PADDLE < BALL
+8,
+    74,
+    78,
+    77,
+1005,
+    77,
+    68, // IF PADDLE == BALL
+11104,  // RETURN -1
+    -1,
+11105,
+  1,
+  0,
+11104,  // RETURN 1
+  1,
+11105,
+  1,
+  0,
+11104,  // RETURN 0
+  0,
+11105,
+  1,
+  0,
+99,     // HALT
+0,  // pos x
+0,  // pos y 
+0,  // id
+0,  // bool
+0,  // paddle x
