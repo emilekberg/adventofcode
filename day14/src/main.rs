@@ -3,7 +3,7 @@ mod nano_factory;
 extern crate regex;
 use regex::Regex;
 fn main() {
-  let content: String = std::fs::read_to_string("./test_03.txt")
+  let content: String = std::fs::read_to_string("./input.txt")
     .unwrap();
 
   let map = get_map_from_string(content);
@@ -12,42 +12,36 @@ fn main() {
   
 }
 
-fn part1(map: &HashMap<(i64, String), Vec<(i64, String)>>) {
+fn part1(map: &HashMap<(i64, String), Vec<(i64, String)>>) -> i64 {
   let mut factory = nano_factory::new(map.clone());
   factory.produce(String::from("FUEL"), 1);
   println!("Part1: {}", factory.required_ore);
   println!("{}",  1000000000000f64 / factory.required_ore as f64);
+  return factory.required_ore;
 }
 
-fn part2(map: &HashMap<(i64, String), Vec<(i64, String)>>) {
+fn part2(map: &HashMap<(i64, String), Vec<(i64, String)>>) -> i64 {
   println!("part 2");
   let max = 1000000000000i64;
   let mut factory = nano_factory::new(map.clone());
-  factory.produce(String::from("FUEL"), 1);
-  let mut high = (max as f64 / factory.required_ore as f64).ceil() as i64; 
-  factory.clear();
-
+  let mut high = max; 
   let mut low = 1;
   let mut i = 1;
-  loop {
-    i = low + ((high - low) / 2);
-    println!("trying with {}", i);
+  while low <= high {
+    i = (low + high) / 2;
     factory.produce(String::from("FUEL"), i);
     if factory.required_ore > max {
-      println!("high! {}", i);
-      high = i;
+      high = i-1;
     }
     else if factory.required_ore < max {
-      println!("low! {}", i);
-      low = i;
-    } else {
-      break;
+      low = i+1;
     }
     factory.clear();
   }
 
 
   println!("Done {}", i);
+  return i;
 }
 
 fn get_map_from_string(s: String) -> HashMap<(i64, String), Vec<(i64, String)>> {
@@ -98,47 +92,32 @@ mod tests {
   #[test]
   fn test_first() {
     let map = get_map_from_string(std::fs::read_to_string("./test_01.txt").unwrap());
-    println!("{:?}", map);
-    let mut factory = nano_factory::new(map);
-    factory.produce(String::from("FUEL"), 1);
-
-    assert_eq!(factory.required_ore, 31);
+    let res = part1(&map);
+    assert_eq!(res, 31);
   }
   #[test]
   fn test_second() {
     let map = get_map_from_string(std::fs::read_to_string("./test_02.txt").unwrap());
-    println!("{:?}", map);
-    let mut factory = nano_factory::new(map);
-    factory.produce(String::from("FUEL"), 1);
-
-    assert_eq!(factory.required_ore, 165);
+    let res = part1(&map);
+    assert_eq!(res, 165);
   }
 
   #[test]
   fn test_third() {
     let map = get_map_from_string(std::fs::read_to_string("./test_03.txt").unwrap());
-    println!("{:?}", map);
-    let mut factory = nano_factory::new(map);
-    factory.produce(String::from("FUEL"), 1);
-
-    assert_eq!(factory.required_ore, 13312);
+    assert_eq!(part1(&map), 13312);
+    assert_eq!(part2(&map), 82892753);
   }  
   #[test]
   fn test_fourth() {
     let map = get_map_from_string(std::fs::read_to_string("./test_04.txt").unwrap());
-    println!("{:?}", map);
-    let mut factory = nano_factory::new(map);
-    factory.produce(String::from("FUEL"), 1);
-
-    assert_eq!(factory.required_ore, 180697);
+    assert_eq!(part1(&map), 180697);
+    assert_eq!(part2(&map), 5586022);
   }
   #[test]
   fn test_fifth() {
     let map = get_map_from_string(std::fs::read_to_string("./test_05.txt").unwrap());
-    println!("{:?}", map);
-    let mut factory = nano_factory::new(map);
-    factory.produce(String::from("FUEL"), 1);
-
-    assert_eq!(factory.required_ore, 2210736);
+    assert_eq!(part1(&map), 2210736 );
+    assert_eq!(part2(&map), 460664 );
   }  
 }
