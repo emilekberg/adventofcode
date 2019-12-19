@@ -1,10 +1,8 @@
 fn main() {
-
-    // let input: String = std::fs::read_to_string("./input.txt").unwrap();
+    let input: String = std::fs::read_to_string("./input.txt").unwrap();
     
-    let input = String::from("03036732577212944063491565474664");
     part1(input.clone()); 
-    // part2(input.clone());
+    part2(input.clone());
 }
 
 fn str_to_int_array(s: String) -> Vec<i32> {
@@ -26,14 +24,21 @@ fn part1(s: String) -> i32 {
 
 fn part2(s: String) -> i32 {
     let input = str_to_int_array(s);
-    let base_pattern = vec![0,1,0,-1];
-    let extended_input = extend_array(&input, 10000);
-    println!("extended input from {} to {}", input.len(), extended_input.len());
-    let result = fft_passes(&extended_input, &base_pattern, 100);
-    let message_offset = array_to_digit(input[0..7].to_vec()) as usize;
-    println!("message offset {:?}, {}", message_offset, result.len());
-    let answer = array_to_digit(result[message_offset..message_offset+8].to_vec());
-    println!("part2: {}", answer);
+    let offset = array_to_digit(input[..7].to_vec()) as usize;
+    let extended_input: Vec<i32> = extend_array(&input, 10000)[offset..].to_vec();
+    let mut result = extended_input.clone();
+    for _ in 0..100 {
+        let mut i = result.len()-2;
+        loop {
+            result[i] = (result[i] + result[i+1]) % 10;
+            if i == 0 {
+                break;
+            }
+            i -= 1;
+        }
+    }
+    let answer = array_to_digit(result[..8].to_vec());
+    println!("part2: {:?}", answer);
     return answer;
 }
 
@@ -49,7 +54,6 @@ fn fft_passes(input: &Vec<i32>, base_pattern: &Vec<i32>, passes: i32) -> Vec<i32
 #[inline(always)]
 fn fft(input: &Vec<i32>, pattern: &Vec<i32>) -> Vec<i32> {
     return input.iter().enumerate().map(|(i,_)| {
-        println!("");
         return drop_digits(multiply(&input, &pattern, i));
     }).collect();
 }
@@ -85,7 +89,6 @@ fn multiply(input: &Vec<i32>, pattern: &Vec<i32>, pattern_offset: usize) -> i32 
     return input.iter().enumerate().skip(pattern_offset).fold(0, move |acc, (i,val)| {
         let index = ((1+i)/(pattern_offset+1))%pattern.len();
         let multiply_by = pattern[index];
-        print!("{},", multiply_by);
         if multiply_by == 0 {
             return acc;
         }
@@ -190,7 +193,7 @@ mod tests {
     #[test]
     fn test_part2() {
         assert_eq!(part2(String::from("03036732577212944063491565474664")), 84462026);
-        // assert_eq!(part2(String::from("02935109699940807407585447034323")), 78725270);
-        // assert_eq!(part2(String::from("03081770884921959731165446850517")), 53553731);
+        assert_eq!(part2(String::from("02935109699940807407585447034323")), 78725270);
+        assert_eq!(part2(String::from("03081770884921959731165446850517")), 53553731);
     }
 }
