@@ -11,7 +11,8 @@ namespace AdventOfCode.Year2020.Modules
     {
       var passports = new List<Passport>();
       var passport = new Passport();
-      input.Split(Environment.NewLine)
+      input.Replace(Environment.NewLine, "\n")
+        .Split('\n')
         .ToList()
         .ForEach(row => 
         {
@@ -62,9 +63,7 @@ namespace AdventOfCode.Year2020.Modules
                 passport.EyeColor = value;
                 break;
               case "pid":
-                var valid = Int64.TryParse(value, out var passportId);
-
-                passport.PassportId = valid ? passportId : -1;
+                passport.PassportId = value;
                 break;
               case "cid":
                 passport.CountryId = int.Parse(value);

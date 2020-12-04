@@ -9,7 +9,7 @@ namespace AdventOfCode.Year2020.Modules
     public string Height {get; set;}
     public string HairColor {get; set;}
     public string EyeColor {get; set;}
-    public Int64? PassportId {get; set;}
+    public string PassportId {get; set;}
     public int? CountryId {get; set;}
   }
 }

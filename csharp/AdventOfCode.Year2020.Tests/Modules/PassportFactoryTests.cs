@@ -3,6 +3,7 @@ using Xunit;
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Year2020.Modules;
+using System;
 
 namespace AdventOfCode.Year2020.Tests.Modules
 {
@@ -21,7 +22,7 @@ namespace AdventOfCode.Year2020.Tests.Modules
       factory.FillPassportData(passport, input2);
 
       Assert.Equal("gry", passport.EyeColor);
-      Assert.Equal(860033327L, passport.PassportId);
+      Assert.Equal("860033327", passport.PassportId);
       Assert.Equal(2020, passport.ExpirationYear);
       Assert.Equal("#fffffd", passport.HairColor);
       Assert.Equal(1937, passport.BirthYear);

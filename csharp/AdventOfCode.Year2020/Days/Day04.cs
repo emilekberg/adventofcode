@@ -18,7 +18,7 @@ namespace AdventOfCode.Year2020
 
       public Task ExecuteAsync()
       {
-        var input = System.IO.File.ReadAllText("../AdventOfCode.Year2020/Data/Day04.txt");
+        var input = System.IO.File.ReadAllText("./Data/Day04.txt");
         var resultPart1 = Part1(input);
         var resultPart2 = Part2(input);
 
@@ -35,10 +35,15 @@ namespace AdventOfCode.Year2020
         return validPassports.Count();
       }
 
-      public ulong Part2(string input)
+      public int Part2(string input)
       {
-        return 0;
-      }
+            var factory = new PassportFactory();
+            var validator = new PassportValidator();
+            var passports = factory.Create(input);
+            var validPassports = passports
+                .Where(passport => validator.ValidateFields(passport));
+            return validPassports.Count();
+        }
     }
 
 }
