@@ -12,7 +12,7 @@ namespace AdventOfCode.Year2020.Tests.Modules
     [Theory]
     [InlineData(0,0, PositionInformation.Empty)]
     [InlineData(2,0, PositionInformation.Tree)]
-    [InlineData(2,2, PositionInformation.Tree)]
+    [InlineData(2,2, PositionInformation.Empty)]
     // tests position loops
     [InlineData(12,0, PositionInformation.Empty)]
     
