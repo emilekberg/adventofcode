@@ -15,6 +15,7 @@ namespace AdventOfCode.ServiceHost
         static async Task<int> Main(string[] args)
         {
             DayHelper.RegisterAssembly(typeof(Year2018.Day01).Assembly);
+            DayHelper.RegisterAssembly(typeof(Year2020.Day01).Assembly);
             var host = BuildHost();
             await host.RunAsync();
             return 0;
@@ -23,11 +24,11 @@ namespace AdventOfCode.ServiceHost
         static IHost BuildHost() =>
            Host.CreateDefaultBuilder()
             .ConfigureLogging(logging =>
-			{
+            {
                logging.AddConsole();
-			})
+            })
             .ConfigureServices(services =>
-			{
+            {
                 services.AddSingleton<IConsole, TextConsole>();
                 services.AddHostedService<AdventOfCodeService>();
                 services.AddAdventOfCodeDays();

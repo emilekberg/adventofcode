@@ -1,17 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\AdventOfCode.Common\AdventOfCode.Common.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>AdventOfCode.Year2020</RootNamespace>
+  </PropertyGroup>
   <ItemGroup>
     <None Update="Data\Day01.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>
