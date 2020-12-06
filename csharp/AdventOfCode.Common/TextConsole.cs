@@ -7,7 +7,7 @@ namespace AdventOfCode.Common
 {
 	public class TextConsole : IConsole
 	{
-		public Task<int> Menu(List<string> options)
+		public Task<MenuSelectionResult> Menu(List<string> options)
 		{
 			return Task.Run(() =>
 			{
@@ -39,10 +39,14 @@ namespace AdventOfCode.Common
 						continue;
 					}
 					selection--;
-					return Task.FromResult(selection);
+					return Task.FromResult(new MenuSelectionResult
+					{
+						Index = selection,
+						Value = options[selection]
+					});
 				}
 				while (!validInput);
-				return Task.FromResult(-1);
+				return Task.FromResult<MenuSelectionResult>(null);
 			});
 		}
 

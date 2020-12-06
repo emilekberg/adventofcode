@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,25 +16,55 @@ namespace AdventOfCode.ServiceHost
 		private readonly ILogger _logger;
 		private readonly IConsole _console;
 		private readonly List<IDay> _days;
+		private readonly List<string> _yearsStrings;
+		private readonly List<string> _dayStrings;
 		public AdventOfCodeService(ILogger<AdventOfCodeService> logger, IConsole console, IEnumerable<IDay> days)
 		{
 			_logger = logger;
 			_console = console;
 			_days = days.ToList();
 
-			
+			var yearRegex = new Regex(@"(Year\d{4})");
+			_yearsStrings = days
+				.Select(x => x.GetType().ToString())
+				.Select(x => yearRegex.Match(x).Groups[1].Value)
+				.Distinct()
+				.ToList();
+
+			_dayStrings = _days
+				.Select(x => x.GetType().ToString())
+				.ToList();
+
 		}
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			while(!stoppingToken.IsCancellationRequested)
+			var dayRegex = new Regex(@"(Day\d{1,2})");
+			while (!stoppingToken.IsCancellationRequested)
 			{
-				await Task.Delay(500);
-				var list = _days.Select(x => x.GetType().ToString()).ToList();
+				await Task.Delay(100);
+				// prompts user to select a year
+				var selectedYear = await _console.Menu(_yearsStrings);
 
-				var selection = await _console.Menu(list);
+				// creates a list of days for the selected year
+				var daysInSelectedYear = _dayStrings
+					.Where(x => x.Contains(selectedYear.Value))
+					.Select(x => dayRegex.Match(x).Groups[1].Value)
+					.ToList();
+
+				// prompts user to select a day
+				var selectedDay = await _console.Menu(daysInSelectedYear);
+
+				// finds the assembly for the selected day and year.
+				var assembly = _days
+					.Where(x => {
+						var typeString = x.GetType().ToString();
+						return typeString.Contains(selectedDay.Value) && typeString.Contains(selectedYear.Value);
+					})
+					.Single();
+
 				try
 				{
-					await _days[selection].ExecuteAsync();
+					await assembly.ExecuteAsync();
 				}
 				catch(Exception ex)
 				{

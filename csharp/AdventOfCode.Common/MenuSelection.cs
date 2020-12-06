@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Common
 {
-	public interface IConsole
+	public class MenuSelectionResult
 	{
-		void Write(string output);
-		void WriteLine(string line);
-		Task<MenuSelectionResult> Menu(List<string> options);
-
+		public int Index { get; set; }
+		public string Value { get; set; }
 	}
 }
