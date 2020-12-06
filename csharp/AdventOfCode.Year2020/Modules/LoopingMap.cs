@@ -24,7 +24,7 @@ namespace AdventOfCode.Year2020.Modules
         .ToList()
         .ForEach(x => 
         {
-          if(x == Environment.NewLine)
+          if(x == "\n")
           {
             currentRow++;
             _map.Add(new List<string>());
