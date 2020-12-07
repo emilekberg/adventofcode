@@ -69,6 +69,7 @@ namespace AdventOfCode.ServiceHost
 				catch(Exception ex)
 				{
 					_logger.LogError(ex, "Error occured while parsing");
+					throw;
 				}
 				finally
 				{
