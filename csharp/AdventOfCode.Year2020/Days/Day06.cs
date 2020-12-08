@@ -47,7 +47,7 @@ namespace AdventOfCode.Year2020
 		public int CountAllAnsweredSameInGroup(string input)
 		{
 			var personAnswers = input.Split("\n");
-			var numPersonsInGroup = personAnswers.Count();
+			var numPersonsInGroup = personAnswers.Length;
 
 			var count = personAnswers.SelectMany(x =>
 				x

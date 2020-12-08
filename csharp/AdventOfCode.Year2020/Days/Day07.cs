@@ -19,27 +19,26 @@ namespace AdventOfCode.Year2020
 	/// </summary>
 	public class Day07 : BaseDay<string, int>, IDay
 	{
+		const string ShinyGold = "shiny gold";
 		public override int Part1(string input)
 		{
 			var dictionary = StringToDictionary(input);
-			var a = dictionary
+			return dictionary
 				.Keys
 				.Where(x => CanContainShinyGold(dictionary, x))
-				.ToList();
-
-			return a.Count();
+				.Count();
 		}
 
 		public override int Part2(string input)
 		{
 			var dictionary = StringToDictionary(input);
-			if (!dictionary.TryGetValue("shiny gold", out var bag))
+			if (!dictionary.TryGetValue(ShinyGold, out var bag))
 			{
 				throw new ArgumentException("input not valid");
 			}
-			var a = bag.Select(x => GetBagsInContainer(dictionary, x));
-
-			return a.Sum();
+			return bag
+				.Select(x => GetBagsInContainer(dictionary, x))
+				.Sum();
 		}
 
 		public Dictionary<string, List<BagContainInfo>> StringToDictionary(string input)
@@ -52,22 +51,18 @@ namespace AdventOfCode.Year2020
 					var key = split[0].Replace("bags", "").Trim();
 					var value = split[1]
 						.Split(',', StringSplitOptions.TrimEntries)
-						.Select(x =>
+						.Select(s => regex.Match(s))
+						.Where(re => re.Success)
+						.Select(re =>
 						{
-							var match = regex.Match(x);
-							if (!match.Success)
-							{
-								return null;
-							}
-							var amount = int.Parse(match.Groups[1].Value);
-							var color = match.Groups[2].Value;
+							var amount = int.Parse(re.Groups[1].Value);
+							var color = re.Groups[2].Value;
 							return new BagContainInfo
 							{
 								Amount = amount,
 								Color = color
 							};
 						})
-						.Where(x => x != null)
 						.ToList();
 					return (key, value);
 				})
@@ -81,7 +76,7 @@ namespace AdventOfCode.Year2020
 				return false;
 			}
 			
-			if (set.Find(x => x.Color == "shiny gold") != null)
+			if (set.Find(x => x.Color == ShinyGold) != null)
 			{
 				return true;
 			}
@@ -93,16 +88,10 @@ namespace AdventOfCode.Year2020
 
 		public int GetBagsInContainer(Dictionary<string, List<BagContainInfo>> dictionary, BagContainInfo bag)
 		{
-			if (!dictionary.TryGetValue(bag.Color, out var set))
+			if (!dictionary.TryGetValue(bag.Color, out var set) || set.Count == 0)
 			{
 				return bag.Amount;
 			}
-
-			if(set.Count == 0)
-			{
-				return bag.Amount;
-			}
-
 			var amount = set
 				.Select(x => GetBagsInContainer(dictionary, x))
 				.Sum();

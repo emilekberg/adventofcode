@@ -33,11 +33,8 @@ namespace AdventOfCode.Year2020
 			var list = input
 				.ToList()
 				.Select(seatData => TraverseBSP(seatData))
+				.OrderBy(x => x.SeatId)
 				.ToList();
-			list.Sort(delegate (SeatData x, SeatData y)
-			{
-				return x.SeatId.CompareTo(y.SeatId);
-			});
 			SeatData prev = null;
 			int id = 0;
 			list.ForEach(seatInfo =>
