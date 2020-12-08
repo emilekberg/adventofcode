@@ -19,10 +19,6 @@ namespace AdventOfCode.Year2020
 	/// </Summary>
 	public class Day02 : BaseDay<string[], int>, IDay
 	{
-		public override Task<string[]> LoadData(string filePath)
-		{
-			return File.ReadAllLinesAsync(filePath);
-		}
 		public List<PasswordData> FormatInput(string[] input)
 		{
 			var regex = new Regex(@"\d+-\d+\s\w:\s(\w+)");

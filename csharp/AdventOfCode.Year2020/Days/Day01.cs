@@ -13,11 +13,6 @@ namespace AdventOfCode.Year2020
 	/// </Summary>
 	public class Day01 : BaseDay<string[], int>, IDay
 	{
-		public override Task<string[]> LoadData(string filePath)
-		{
-			return File.ReadAllLinesAsync(filePath);
-		}
-
 		public override int Part1(string[] input)
 		{
 			var numbers = input.Select(int.Parse).ToList();

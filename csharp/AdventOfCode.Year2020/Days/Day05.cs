@@ -16,11 +16,6 @@ namespace AdventOfCode.Year2020
 	}
 	public class Day05 : BaseDay<string[], int>, IDay
 	{
-		public override Task<string[]> LoadData(string filePath)
-		{
-			return File.ReadAllLinesAsync(filePath);
-		}
-
 		public override int Part1(string[] input)
 		{
 			var highest = input

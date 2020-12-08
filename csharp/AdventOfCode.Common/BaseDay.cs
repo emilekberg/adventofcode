@@ -8,6 +8,25 @@ namespace AdventOfCode.Common
 	{
 		public string DataFilePath => $"./Data/{GetType().Name}.txt";
 
+		public async Task<TInput> LoadData(string filePath)
+		{
+			var type = typeof(TInput);
+			object file = null;
+			if (type == typeof(string[]))
+			{
+				file = await File.ReadAllLinesAsync(filePath);
+			}
+			else if (type == typeof(string))
+			{
+				file = await File.ReadAllTextAsync(filePath);
+			}
+			if(file == null)
+			{
+				throw new ArgumentException($"could not convert {typeof(TInput)}");
+			}
+			return (TInput)Convert.ChangeType(file, typeof(TInput));
+			
+		}
 		public async Task ExecuteAsync()
 		{
 			TInput input = await LoadData(DataFilePath);
@@ -15,7 +34,6 @@ namespace AdventOfCode.Common
 			TResult resultPart2 = Part2(input);
 			Console.WriteLine($"Results Part1: {resultPart1}, Part2: {resultPart2}");
 		}
-		public abstract Task<TInput> LoadData(string filePath);
 		public virtual TResult Part1(TInput input)
 		{
 			return default;

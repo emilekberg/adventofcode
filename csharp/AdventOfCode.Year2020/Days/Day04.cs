@@ -14,10 +14,6 @@ namespace AdventOfCode.Year2020
 	/// </Summary>
 	public class Day04 : BaseDay<string, int>, IDay
 	{
-		public override Task<string> LoadData(string filePath)
-		{
-			return File.ReadAllTextAsync(filePath);
-		}
 		public override int Part1(string input)
 		{
 			var factory = new PassportFactory();

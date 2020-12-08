@@ -14,10 +14,6 @@ namespace AdventOfCode.Year2020
 	/// </Summary>
 	public class Day03 : BaseDay<string, ulong>, IDay
 	{
-		public override Task<string> LoadData(string filePath)
-		{
-			return File.ReadAllTextAsync(filePath);
-		}
 		public override ulong Part1(string input)
 		{
 			var map = new LoopingMap(input);

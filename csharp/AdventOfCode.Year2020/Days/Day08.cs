@@ -10,11 +10,6 @@ namespace AdventOfCode.Year2020.Days
 {
 	public class Day08 : BaseDay<string[], int>, IDay
 	{
-		public override Task<string[]> LoadData(string filePath)
-		{
-			return File.ReadAllLinesAsync(filePath);
-		}
-
 		public List<Command> FormatInput(string[] input)
 		{
 			return input
