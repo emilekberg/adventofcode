@@ -1,6 +1,7 @@
 ﻿using AdventOfCode.Common;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,17 +14,13 @@ namespace AdventOfCode.Year2020
 		public string Color { get; set; }
 		public int Amount { get; set; }
 	}
-	public class Day07 : IDay
+	public class Day07 : BaseDay<string, int>, IDay
 	{
-		public async Task ExecuteAsync()
+		public override Task<string> LoadData(string filePath)
 		{
-			var input = await System.IO.File.ReadAllTextAsync("./Data/Day07.txt");
-			var resultPart1 = Part1(input);
-			var resultPart2 = Part2(input);
-
-			Console.WriteLine($"Results Part1: {resultPart1}, Part2: {resultPart2}");
+			return File.ReadAllTextAsync(filePath);
 		}
-		public int Part1(string input)
+		public override int Part1(string input)
 		{
 			var dictionary = StringToDictionary(input);
 			var a = dictionary
@@ -32,6 +29,18 @@ namespace AdventOfCode.Year2020
 				.ToList();
 
 			return a.Count();
+		}
+
+		public override int Part2(string input)
+		{
+			var dictionary = StringToDictionary(input);
+			if (!dictionary.TryGetValue("shiny gold", out var bag))
+			{
+				throw new ArgumentException("input not valid");
+			}
+			var a = bag.Select(x => GetBagsInContainer(dictionary, x));
+
+			return a.Sum();
 		}
 
 		public Dictionary<string, List<BagContainInfo>> StringToDictionary(string input)
@@ -81,18 +90,6 @@ namespace AdventOfCode.Year2020
 			return set
 				.Where(x => CanContainShinyGold(dictionary, x.Color))
 				.Any();
-		}
-
-		public int Part2(string input)
-		{
-			var dictionary = StringToDictionary(input);
-			if (!dictionary.TryGetValue("shiny gold", out var bag))
-			{
-				throw new ArgumentException("input not valid");
-			}
-			var a = bag.Select(x => GetBagsInContainer(dictionary, x));
-
-			return a.Sum();
 		}
 
 		public int GetBagsInContainer(Dictionary<string, List<BagContainInfo>> dictionary, BagContainInfo bag)

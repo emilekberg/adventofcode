@@ -1,104 +1,98 @@
 ﻿using AdventOfCode.Common;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Year2020
 {
-    public class SeatData
+	public class SeatData
 	{
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public int SeatId => Row * 8 + Column;
+		public int Row { get; set; }
+		public int Column { get; set; }
+		public int SeatId => Row * 8 + Column;
 	}
-	public class Day05 : IDay
+	public class Day05 : BaseDay<string[], int>, IDay
 	{
-        public Day05()
-        {
-        }
-
-        public async Task ExecuteAsync()
-        {
-            var input = await System.IO.File.ReadAllLinesAsync("./Data/Day05.txt");
-            var resultPart1 = Part1(input);
-            var resultPart2 = Part2(input);
-
-            Console.WriteLine($"Results Part1: {resultPart1}, Part2: {resultPart2}");
-        }
-        public int Part1(string[] input)
-        {
-            var highest = input
-                .ToList()
-                .Select(seatData => TraverseBSP(seatData))
-                .Max(seatInfo => seatInfo.SeatId);
-            return highest;
-        }
-
-        public int Part2(string[] input)
-        {
-            var list = input
-                .ToList()
-                .Select(seatData => TraverseBSP(seatData))
-                .ToList();
-            list.Sort(delegate (SeatData x, SeatData y)
-            {
-                return x.SeatId.CompareTo(y.SeatId);
-            });
-            SeatData prev = null;
-            int id = 0;
-            list.ForEach(seatInfo =>
-            {
-                if(prev != null)
-				{
-                    if(prev.SeatId != seatInfo.SeatId-1)
-					{
-                        id = seatInfo.SeatId - 1;
-                    }
-                }
-                prev = seatInfo;
-            });
-            return id;
-        }
-
-        public SeatData TraverseBSP(string input)
+		public override Task<string[]> LoadData(string filePath)
 		{
-            var rowMax = 127;
-            var rowMin = 0;
-            var colMax = 7;
-            var colMin = 0;
-
-            int diff;
-            input.ToCharArray()
-                .ToList()
-                .ForEach(c =>
-                {
-                    switch(c)
-					{
-                        case 'F':
-                            diff = (int)Math.Ceiling((rowMax - rowMin) * 0.5);
-                            rowMax -= diff;
-                            break;
-                        case 'B':
-                            diff = (int)Math.Ceiling((rowMax - rowMin) * 0.5);
-                            rowMin += diff;
-                            break;
-                        case 'L':
-                            diff = (int)Math.Ceiling((colMax - colMin) * 0.5);
-                            colMax -= diff;
-                            break;
-                        case 'R':
-                            diff = (int)Math.Ceiling((colMax - colMin) * 0.5);
-                            colMin += diff;
-                            break;
-					}
-                });
-            return new SeatData
-            {
-                Row = rowMin,
-                Column = colMin
-            };
+			return File.ReadAllLinesAsync(filePath);
 		}
-    }
+
+		public override int Part1(string[] input)
+		{
+			var highest = input
+				.ToList()
+				.Select(seatData => TraverseBSP(seatData))
+				.Max(seatInfo => seatInfo.SeatId);
+			return highest;
+		}
+
+		public override int Part2(string[] input)
+		{
+			var list = input
+				.ToList()
+				.Select(seatData => TraverseBSP(seatData))
+				.ToList();
+			list.Sort(delegate (SeatData x, SeatData y)
+			{
+				return x.SeatId.CompareTo(y.SeatId);
+			});
+			SeatData prev = null;
+			int id = 0;
+			list.ForEach(seatInfo =>
+			{
+				if (prev != null)
+				{
+					if (prev.SeatId != seatInfo.SeatId - 1)
+					{
+						id = seatInfo.SeatId - 1;
+					}
+				}
+				prev = seatInfo;
+			});
+			return id;
+		}
+
+		public SeatData TraverseBSP(string input)
+		{
+			var rowMax = 127;
+			var rowMin = 0;
+			var colMax = 7;
+			var colMin = 0;
+
+			int diff;
+			input.ToCharArray()
+				.ToList()
+				.ForEach(c =>
+				{
+					switch (c)
+					{
+						case 'F':
+							diff = (int)Math.Ceiling((rowMax - rowMin) * 0.5);
+							rowMax -= diff;
+							break;
+						case 'B':
+							diff = (int)Math.Ceiling((rowMax - rowMin) * 0.5);
+							rowMin += diff;
+							break;
+						case 'L':
+							diff = (int)Math.Ceiling((colMax - colMin) * 0.5);
+							colMax -= diff;
+							break;
+						case 'R':
+							diff = (int)Math.Ceiling((colMax - colMin) * 0.5);
+							colMin += diff;
+							break;
+					}
+				});
+			return new SeatData
+			{
+				Row = rowMin,
+				Column = colMin
+			};
+		}
+	}
 }

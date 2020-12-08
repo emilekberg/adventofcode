@@ -1,6 +1,7 @@
 ﻿using AdventOfCode.Common;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,17 +9,13 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Year2020
 {
-	public class Day06 : IDay
+	public class Day06 : BaseDay<string, int>, IDay
 	{
-		public async Task ExecuteAsync()
+		public override Task<string> LoadData(string filePath)
 		{
-			var input = await System.IO.File.ReadAllTextAsync("./Data/Day06.txt");
-			var resultPart1 = Part1(input);
-			var resultPart2 = Part2(input);
-
-			Console.WriteLine($"Results Part1: {resultPart1}, Part2: {resultPart2}");
+			return File.ReadAllTextAsync(filePath);
 		}
-		public int Part1(string input)
+		public override int Part1(string input)
 		{
 			var sum = input
 				.Replace("\r", "")
@@ -28,7 +25,7 @@ namespace AdventOfCode.Year2020
 			return sum;
 		}
 
-		public int Part2(string input)
+		public override int Part2(string input)
 		{
 			var sum = input
 				.Replace("\r", "")
