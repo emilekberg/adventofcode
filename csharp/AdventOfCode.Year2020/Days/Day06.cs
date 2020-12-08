@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Year2020
 {
+	/// <summary>
+	/// https://adventofcode.com/2020/day/6
+	/// </summary>
 	public class Day06 : BaseDay<string, int>, IDay
 	{
 		public override int Part1(string input)

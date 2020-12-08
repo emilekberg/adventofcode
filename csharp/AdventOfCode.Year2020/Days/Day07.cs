@@ -14,6 +14,9 @@ namespace AdventOfCode.Year2020
 		public string Color { get; set; }
 		public int Amount { get; set; }
 	}
+	/// <summary>
+	/// https://adventofcode.com/2020/day/7
+	/// </summary>
 	public class Day07 : BaseDay<string, int>, IDay
 	{
 		public override int Part1(string input)

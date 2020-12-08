@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Year2020.Days
 {
+	/// <summary>
+	/// https://adventofcode.com/2020/day/8
+	/// </summary>
 	public class Day08 : BaseDay<string[], int>, IDay
 	{
 		public List<Command> FormatInput(string[] input)

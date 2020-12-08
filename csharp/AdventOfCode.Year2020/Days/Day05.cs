@@ -14,6 +14,9 @@ namespace AdventOfCode.Year2020
 		public int Column { get; set; }
 		public int SeatId => Row * 8 + Column;
 	}
+	/// <summary>
+	/// https://adventofcode.com/2020/day/5
+	/// </summary>
 	public class Day05 : BaseDay<string[], int>, IDay
 	{
 		public override int Part1(string[] input)
