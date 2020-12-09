@@ -28,18 +28,17 @@ namespace AdventOfCode.Year2020.Days
 			while (true);
 		}
 
+		/// <summary>
+		/// Returns a list of permutations from the input data.
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
 		public List<(long a, long b)> Permutations(List<long> data)
 		{
-			var result = new List<(long, long)>(data.Count());
-			for (int i = 0; i < data.Count(); i++)
-			{
-				for (int j = i; j < data.Count(); j++)
-				{
-					if (i == j) continue;
-					result.Add((data[i], data[j]));
-				}
-			}
-			return result;
+			return data
+				.SelectMany((x, i) => data.Skip(i+1), (a, b) => (a, b))
+				.Where((x, y) => x.a != x.b)
+				.ToList();
 		}
 
 		public override long Part2(string[] input) => Part2(input, 25);
@@ -66,10 +65,7 @@ namespace AdventOfCode.Year2020.Days
 				}
 				else if (sum == toFind)
 				{
-					var orderedSubSetOfNumbers = subSetOfNumbers.OrderBy(x => x).ToList();
-					var low = orderedSubSetOfNumbers[0];
-					var high = orderedSubSetOfNumbers[^1];
-					return low + high;
+					return subSetOfNumbers.Min() + subSetOfNumbers.Max();
 				}
 			}
 			while (true);

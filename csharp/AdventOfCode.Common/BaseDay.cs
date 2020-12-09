@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Common
 {
-	public abstract class BaseDay<TInput, TResult>
+	public abstract class BaseDay<TInput, TResult> 
 	{
-		public string DataFilePath => $"./Data/{GetType().Name}.txt";
+		public string DataFilePath => $"./Data/{GetType().FullName.Replace("AdventOfCode.", "")}.txt";
 
 		public async Task<TInput> LoadData(string filePath)
 		{

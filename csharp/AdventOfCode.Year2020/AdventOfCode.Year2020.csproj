@@ -9,31 +9,31 @@
     <RootNamespace>AdventOfCode.Year2020</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="Data\Day01.txt">
+    <None Update="Data\Year2020.Day01.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day02.txt">
+    <None Update="Data\Year2020.Day02.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day03.txt">
+    <None Update="Data\Year2020.Day03.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day04.txt">
+    <None Update="Data\Year2020.Day04.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day09.txt">
+    <None Update="Data\Year2020.Day09.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day08.txt">
+    <None Update="Data\Year2020.Day08.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day07.txt">
+    <None Update="Data\Year2020.Day07.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day06.txt">
+    <None Update="Data\Year2020.Day06.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Day05.txt">
+    <None Update="Data\Year2020.Day05.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
