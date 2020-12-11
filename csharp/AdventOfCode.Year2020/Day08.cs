@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Year2020.Days
+namespace AdventOfCode.Year2020
 {
 	/// <summary>
 	/// https://adventofcode.com/2020/day/8

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Common;
-namespace AdventOfCode.Year2020.Days
+namespace AdventOfCode.Year2020
 {
 	public class Day09 : BaseDay<string[], long>, IDay
 	{

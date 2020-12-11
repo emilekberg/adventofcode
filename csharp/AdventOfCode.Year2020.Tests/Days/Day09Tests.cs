@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Year2020.Days;
+﻿using AdventOfCode.Year2020;
 using System;
 using System.Collections.Generic;
 using System.Linq;
