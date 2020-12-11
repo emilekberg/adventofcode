@@ -26,11 +26,11 @@ namespace AdventOfCode.Year2020.Tests.Days
 		}
 
 		public static IEnumerable<object[]> Part2Data =>
-		new List<object[]>
-		{
-			new object[] { new string[] { "16", "10", "15", "5", "1", "11", "7", "19", "6", "12", "4" }, 8 },
-			new object[] { new string[] { "28","33","18","42","31","14","46","20","48","47","24","23","49","45","19","38","39","11","1","32","25","35","8","17","7","9","4","2","34","10","3" }, 19208 },
-		};
+			new List<object[]>
+			{
+				new object[] { new string[] { "16", "10", "15", "5", "1", "11", "7", "19", "6", "12", "4" }, 8 },
+				new object[] { new string[] { "28","33","18","42","31","14","46","20","48","47","24","23","49","45","19","38","39","11","1","32","25","35","8","17","7","9","4","2","34","10","3" }, 19208 },
+			};
 		[Theory]
 		[MemberData(nameof(Part2Data))]
 		public void Part2(string[] input, int expected)
