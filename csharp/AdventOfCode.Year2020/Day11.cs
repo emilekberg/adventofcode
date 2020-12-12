@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdventOfCode.Year2020
 {
-	public static class Position
+	public static class PositionData
 	{
 		public const char FLOOR = '.';
 		public const char EMPTY_SEAT = 'L';
@@ -32,11 +32,11 @@ namespace AdventOfCode.Year2020
 					{
 						if (SeatIsEmpty(currentState, x, y) && NumberOfAdjacentOccupantSeats(currentState, x, y) == 0)
 						{
-							nextState[y][x] = Position.OCCUPIED_SEAT;
+							nextState[y][x] = PositionData.OCCUPIED_SEAT;
 						}
 						if (SeatIsOccupied(currentState, x, y) && NumberOfAdjacentOccupantSeats(currentState, x, y) >= 4)
 						{
-							nextState[y][x] = Position.EMPTY_SEAT;
+							nextState[y][x] = PositionData.EMPTY_SEAT;
 						}
 					}
 				}
@@ -46,7 +46,7 @@ namespace AdventOfCode.Year2020
 				
 			}
 			while (!changeHasBeenMade);
-			return currentState.SelectMany(x => x).Where(x => x == Position.OCCUPIED_SEAT).Count();
+			return currentState.SelectMany(x => x).Where(x => x == PositionData.OCCUPIED_SEAT).Count();
 		}
 
 
@@ -69,11 +69,11 @@ namespace AdventOfCode.Year2020
 					{
 						if (SeatIsEmpty(currentState, x, y) && NumberOfOccupantSeatsInLineOfSight(currentState, x, y).occupied == 0)
 						{
-							nextState[y][x] = Position.OCCUPIED_SEAT;
+							nextState[y][x] = PositionData.OCCUPIED_SEAT;
 						}
 						if (SeatIsOccupied(currentState, x, y) && NumberOfOccupantSeatsInLineOfSight(currentState, x, y).occupied >= 5)
 						{
-							nextState[y][x] = Position.EMPTY_SEAT;
+							nextState[y][x] = PositionData.EMPTY_SEAT;
 						}
 					}
 				}
@@ -83,16 +83,16 @@ namespace AdventOfCode.Year2020
 
 			}
 			while (!changeHasBeenMade);
-			return currentState.SelectMany(x => x).Where(x => x == Position.OCCUPIED_SEAT).Count();
+			return currentState.SelectMany(x => x).Where(x => x == PositionData.OCCUPIED_SEAT).Count();
 		}
 
 		public bool SeatIsEmpty(List<List<char>> state, int seatX, int seatY)
 		{
-			return state[seatY][seatX] == Position.EMPTY_SEAT;
+			return state[seatY][seatX] == PositionData.EMPTY_SEAT;
 		}
 		public bool SeatIsOccupied(List<List<char>> state, int seatX, int seatY)
 		{
-			return state[seatY][seatX] == Position.OCCUPIED_SEAT;
+			return state[seatY][seatX] == PositionData.OCCUPIED_SEAT;
 		}
 		public int NumberOfAdjacentOccupantSeats(List<List<char>> state, int seatX, int seatY)
 		{
@@ -116,10 +116,10 @@ namespace AdventOfCode.Year2020
 					var seat = state[checkY][checkX];
 					switch (seat)
 					{
-						case Position.OCCUPIED_SEAT:
+						case PositionData.OCCUPIED_SEAT:
 							seenOccupied++;
 							break;
-						case Position.EMPTY_SEAT:
+						case PositionData.EMPTY_SEAT:
 							seenEmpty++;
 							break;
 					}
@@ -156,9 +156,9 @@ namespace AdventOfCode.Year2020
 					var seat = state[checkY][checkX];
 					switch (seat)
 					{
-						case Position.OCCUPIED_SEAT:
+						case PositionData.OCCUPIED_SEAT:
 							return (1, 0);
-						case Position.EMPTY_SEAT:
+						case PositionData.EMPTY_SEAT:
 							return (0, 1);
 					}
 				}
