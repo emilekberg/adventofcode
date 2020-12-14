@@ -31,8 +31,7 @@ namespace AdventOfCode.Year2020
 				{
 					var memoryAddress = ulong.Parse(regexResult.Groups[1].Value);
 					var memoryValue = ulong.Parse(regexResult.Groups[2].Value);
-					var maskedValue = (memoryValue & switchToZeroMask) | switchToOneMask;
-					memory[memoryAddress] = maskedValue;
+					memory[memoryAddress] = (memoryValue & switchToZeroMask) | switchToOneMask;
 				}
 			}
 			ulong result = memory.Values.Aggregate(0UL, (acc, next) => acc + next);
