@@ -52,19 +52,26 @@ namespace AdventOfCode.ServiceHost
 					.ToList();
 
 				// prompts user to select a day
+				daysInSelectedYear.Add("All");
 				var selectedDay = await _console.Menu(daysInSelectedYear);
 
 				// finds the assembly for the selected day and year.
-				var assembly = _days
-					.Where(x => {
+				var assemblies = _days
+					.Where(x =>
+					{
+						if (selectedDay.Value == "All") return true;
 						var typeString = x.GetType().ToString();
 						return typeString.Contains(selectedDay.Value) && typeString.Contains(selectedYear.Value);
 					})
-					.Single();
+					.ToList();
 
 				try
 				{
-					await assembly.ExecuteAsync();
+					assemblies.ForEach(async day =>
+					{
+						await day.ExecuteAsync();
+					});
+					
 				}
 				catch(Exception ex)
 				{

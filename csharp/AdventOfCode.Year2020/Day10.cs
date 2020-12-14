@@ -14,7 +14,7 @@ namespace AdventOfCode.Year2020
 			data.Add(0);
 			data.Add(deviceJolts);
 			data.Sort();
-			var diffs = data.Zip(data.Skip(1), (a, b) => Diff(a, b)).ToList();
+			var diffs = data.Zip(data.Skip(1), (a, b) => b - a).ToList();
 
 			var ones = diffs.Count(x => x == 1);
 			var threes = diffs.Count(x => x == 3);

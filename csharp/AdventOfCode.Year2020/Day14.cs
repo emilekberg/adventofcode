@@ -14,10 +14,9 @@ namespace AdventOfCode.Year2020
 		private Regex MemoryRegex = new Regex(@"mem\[(\d+)\]\s=\s(\d+)");
 		public override ulong Part1(string[] input)
 		{
-
 			var memory = new Dictionary<ulong, ulong>();
-			List<(char n, int i)> currentMask = null;
-
+			ulong switchToZeroMask = 0;
+			ulong switchToOneMask = 0;
 			var enumerator = input.GetEnumerator();
 			while (enumerator.MoveNext())
 			{
@@ -26,32 +25,13 @@ namespace AdventOfCode.Year2020
 				if ((regexResult = MaskRegex.Match(s)).Success)
 				{
 					var maskString = regexResult.Groups[1].Value;
-					currentMask = maskString
-						.ToCharArray()
-						.Reverse()
-						.Select((c, i) => (c, i))
-						.Where(tuple => tuple.c != 'X')
-						.ToList();
+					(switchToZeroMask, switchToOneMask) = GetMasks(maskString);
 				} 
 				else if ((regexResult = MemoryRegex.Match(s)).Success)
 				{
 					var memoryAddress = ulong.Parse(regexResult.Groups[1].Value);
 					var memoryValue = ulong.Parse(regexResult.Groups[2].Value);
-
-					var maskedValue = memoryValue;
-
-					currentMask.ForEach((tuple) =>
-					{
-						switch(tuple.n)
-						{
-							case '1':
-								maskedValue |= 1UL << tuple.i;
-								break;
-							case '0':
-								maskedValue &= ~(1UL << tuple.i);
-								break;
-						}						
-					});
+					var maskedValue = (memoryValue & switchToZeroMask) | switchToOneMask;
 					memory[memoryAddress] = maskedValue;
 				}
 			}
@@ -62,7 +42,7 @@ namespace AdventOfCode.Year2020
 		public override ulong Part2(string[] input)
 		{
 			var memory = new Dictionary<ulong, ulong>();
-			List<int> currentMask = null;
+			ulong switchToOneMask = 0;
 			List<int> currentFloatingBits = null;
 			var enumerator = input.GetEnumerator();
 			while (enumerator.MoveNext())
@@ -72,16 +52,11 @@ namespace AdventOfCode.Year2020
 				if ((regexResult = MaskRegex.Match(s)).Success)
 				{
 					var maskString = regexResult.Groups[1].Value;
-					var mask = maskString
+					(switchToOneMask, _) = GetMasks(maskString);
+					currentFloatingBits = maskString
 						.ToCharArray()
 						.Reverse()
-						.Select((c, i) => (c, i));
-
-					currentMask = mask
-						.Where(tuple => tuple.c == '1')
-						.Select(tuple => tuple.i)
-						.ToList();
-					currentFloatingBits = mask
+						.Select((c, i) => (c, i))
 						.Where(tuple => tuple.c == 'X')
 						.Select(tuple => tuple.i)
 						.ToList();
@@ -91,9 +66,9 @@ namespace AdventOfCode.Year2020
 					var memoryAddress = ulong.Parse(regexResult.Groups[1].Value);
 					var memoryValue = ulong.Parse(regexResult.Groups[2].Value);
 
-					var addressMask = memoryAddress;
+					var addressMask = memoryAddress | switchToOneMask;
 
-					currentMask.ForEach(i => addressMask |= 1UL << i);
+					
 					WriteMemory(memory, addressMask, currentFloatingBits, memoryValue);
 				}
 			}
@@ -124,6 +99,15 @@ namespace AdventOfCode.Year2020
 				WriteMemory(memory, valueBitOn, indices.Skip(1).ToList(), value);
 			}
 
+		}
+
+		public (ulong, ulong) GetMasks(string input)
+		{
+			var switchToZeroMaskString = input.Replace("X", "1");
+			var switchToOneMaskString = input.Replace("X", "0");
+			var switchToZeroMask = Convert.ToUInt64(switchToZeroMaskString, 2);
+			var switchToOneMask = Convert.ToUInt64(switchToOneMaskString, 2);
+			return (switchToZeroMask, switchToOneMask);
 		}
 	}
 }

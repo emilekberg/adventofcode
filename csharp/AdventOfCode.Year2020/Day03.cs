@@ -62,7 +62,6 @@ namespace AdventOfCode.Year2020
 				}
 			}
 			while (y < map.Height - 1);
-			Console.WriteLine($"cut down tree, {cutdownTrees}");
 			return cutdownTrees;
 		}
 	}
