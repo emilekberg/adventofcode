@@ -9,7 +9,7 @@ namespace AdventOfCode.Common
 	{
 		public string DataFilePath => $"./Data/{GetType().FullName.Replace("AdventOfCode.", "")}.txt";
 
-		public async Task<TInput> LoadData(string filePath)
+		public virtual async Task<TInput> LoadData(string filePath)
 		{
 			var type = typeof(TInput);
 			object file = null;
