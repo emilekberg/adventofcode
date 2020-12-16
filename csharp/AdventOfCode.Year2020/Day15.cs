@@ -19,28 +19,29 @@ namespace AdventOfCode.Year2020
 		}
 		public int NumberGame(string input, int nthNumber)
 		{
-			var hashset = new Dictionary<int, int>(nthNumber);
+			var numbers = Enumerable.Repeat(-1, nthNumber).ToArray();
+			for (int i = 0; i < nthNumber; i++) numbers[i] = -1;
 			var currentTurn = 0;
 			var lastNumberMentioned = 0;
 			input
 				.Split(',')
 				.Select(int.Parse)
 				.ToList()
-				.ForEach(x =>
+				.ForEach(number =>
 				{
-					hashset.Add(x, ++currentTurn);
-					lastNumberMentioned = x;
+					numbers[number] = ++currentTurn;
+					lastNumberMentioned = number;
 				});
-			hashset.Remove(hashset.Last().Key);
-
+			// remove this number from being mentioned, as this will be added to the list further down.
+			numbers[lastNumberMentioned] = -1;
 			for(int i = currentTurn; i < nthNumber; i++)
 			{
 				var numberToMention = 0;
-				if (hashset.TryGetValue(lastNumberMentioned, out var age))
+				if(numbers[lastNumberMentioned] != -1)
 				{
-					numberToMention = i - age;
+					numberToMention = i - numbers[lastNumberMentioned];
 				}
-				hashset[lastNumberMentioned] = i;
+				numbers[lastNumberMentioned] = i;
 				lastNumberMentioned = numberToMention;
 			}
 			return lastNumberMentioned;
