@@ -19,7 +19,6 @@ namespace AdventOfCode.Year2020
 		}
 		public int NumberGame(string input, int nthNumber)
 		{
-			var numbers = new int[nthNumber];
 			var hashset = new Dictionary<int, int>(nthNumber);
 			var currentTurn = 0;
 			var lastNumberMentioned = 0;
@@ -34,25 +33,17 @@ namespace AdventOfCode.Year2020
 				});
 			hashset.Remove(hashset.Last().Key);
 
-			do
+			for(int i = currentTurn; i < nthNumber; i++)
 			{
-				currentTurn++;
-				var numberToMention = -1;
-				if (hashset.TryGetValue(lastNumberMentioned, out var i))
+				var numberToMention = 0;
+				if (hashset.TryGetValue(lastNumberMentioned, out var age))
 				{
-					numberToMention = currentTurn-1 - i;
+					numberToMention = i - age;
 				}
-				else
-				{
-					numberToMention = 0;
-				}
-				hashset[lastNumberMentioned] = currentTurn-1;
+				hashset[lastNumberMentioned] = i;
 				lastNumberMentioned = numberToMention;
-				if (currentTurn == nthNumber)
-				{
-					return numberToMention;
-				}
-			} while (true);
+			}
+			return lastNumberMentioned;
 		}
 	}
 }
