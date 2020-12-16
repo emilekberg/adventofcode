@@ -35,8 +35,8 @@ namespace AdventOfCode.Year2020
 						// check if any field matches the kriteras of any rule.
 						var fieldResult = rules.All(kvp =>
 						{
-							var rule = kvp.Value;
-							return !(rule.low.IsInRange(field) || rule.high.IsInRange(field));
+							var (low, high) = kvp.Value;
+							return !(low.IsInRange(field) || high.IsInRange(field));
 						});
 
 						// if any field matches the rules criteras, return 0, otherwise return the field value.
@@ -62,6 +62,7 @@ namespace AdventOfCode.Year2020
 			var yourTicket = FormatTickets("your ticket", cleaned).First();
 			var nearbyTickets = FormatTickets("nearby tickets", cleaned);
 
+			// find all valid tickets
 			var validTickets = nearbyTickets
 				.Where(ticket =>
 				{
@@ -81,19 +82,21 @@ namespace AdventOfCode.Year2020
 				.ToList();
 
 			
+			// create a list of all possible combinations of fields and rules
 			var results = new List<ValidityResult>();
 			rules.Keys.ToList().ForEach(key =>
 			{
-				var rule = rules[key];
+				var (low, high) = rules[key];
 
 				var width = validTickets[0].Count;
+				var height = validTickets.Count;
 				for (int x = 0; x < width; x++)
 				{
 					bool entireRowValid = true;
-					for (int y = 0; y < validTickets.Count; y++)
+					for (int y = 0; y < height; y++)
 					{
 						var value = validTickets[y][x];
-						entireRowValid = entireRowValid && (rule.low.IsInRange(value) || rule.high.IsInRange(value));
+						entireRowValid = entireRowValid && (low.IsInRange(value) || high.IsInRange(value));
 						if (!entireRowValid)
 						{
 							break;
@@ -107,22 +110,29 @@ namespace AdventOfCode.Year2020
 			});
 
 			
+			// search for the only possible combinations.
 			var resultToMap = results.ToList();
-			
 			var ruleFieldMap = new Dictionary<string, int>();
 			do
 			{
-				var groups = resultToMap.GroupBy(x => x.Row).ToList();
-				var mapping = groups.First(x => x.Count() == 1).Single();
+				// sarch for parts where there is only one row.
+				var mapping = resultToMap.Where(x =>
+				{
+					var count = resultToMap.Count(y => x.Row == y.Row);
+					return count == 1;
+				}).Single();
 				ruleFieldMap.Add(mapping.Rule, mapping.Row);
-				resultToMap = resultToMap.Where(x => x.Rule != mapping.Rule && x.Row != mapping.Row).ToList();
+				
+				// remove the row we just decided had only one possible combination.
+				resultToMap.RemoveAll(x => x.Rule == mapping.Rule || x.Row == mapping.Row);
 			}
 			while (resultToMap.Count > 0);
+
 			// multiply all values of my ticket with the fields that contains searchWord. 
 			var result = ruleFieldMap.Keys.Where(x => x.Contains(searchWord))
-				.Aggregate(1UL, (acc, next) =>
+				.Aggregate(1UL, (acc, field) =>
 				{
-					var value = ruleFieldMap[next];
+					var value = ruleFieldMap[field];
 					
 					return acc * (ulong)yourTicket[value];
 				});
