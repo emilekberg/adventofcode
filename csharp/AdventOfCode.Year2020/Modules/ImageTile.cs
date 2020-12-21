@@ -6,6 +6,8 @@ namespace AdventOfCode.Year2020.Modules
 {
 	public class ImageTile
 	{
+		public int Width { get; init; }
+		public int Height { get; init; }
 
 		public string BorderNorth { get; set; }
 		public string BorderEast { get; set; }
@@ -18,6 +20,12 @@ namespace AdventOfCode.Year2020.Modules
 		public int Rotation { get; set; }
 
 		public List<List<char>> Data { get; set; }
+		public ImageTile(List<List<char>> data)
+		{
+			Data = data;
+			Height = Data.Count;
+			Width = Data[0].Count;
+		}
 		public ImageTile(int id, string data)
 		{
 			Id = id;
@@ -25,6 +33,8 @@ namespace AdventOfCode.Year2020.Modules
 				.Split("\n", StringSplitOptions.RemoveEmptyEntries)
 				.Select(x => x.ToCharArray().ToList())
 				.ToList();
+			Height = Data.Count;
+			Width = Data[0].Count;
 			UpdateBorders();
 		}
 
@@ -90,10 +100,21 @@ namespace AdventOfCode.Year2020.Modules
 				BorderWest == revEdge;
 		}
 
+		public List<string> GetDataWithoutBorder()
+		{
+			return Data
+				.Skip(1).Take(Data.Count - 2)
+				.Select(cols =>
+				{
+					var colWithoutBorder = cols.Skip(1).Take(cols.Count - 2).ToList();
+					return string.Join(string.Empty, colWithoutBorder);
+				})
+				.ToList();
+		}
+
 		public bool ManipulateUntilMatching(char border, string borderToValidate)
 		{
 			var hasFlippedX = false;
-			// var hasFlippedY = false;
 			var didChange = false;
 			var shouldContinueLoop = true;
 			do
@@ -125,11 +146,6 @@ namespace AdventOfCode.Year2020.Modules
 					DoFlipX();
 					hasFlippedX = true;
 				}
-				/*else if (!hasFlippedY)
-				{
-					DoFlipY();
-					hasFlippedY = true;
-				}*/
 			}
 			while (shouldContinueLoop);
 			throw new Exception("should not happen");

@@ -24,10 +24,10 @@ namespace AdventOfCode.Year2020.Tests.Days
 		[Fact]
 		public void Part2()
 		{
-			var input = string.Empty;
+			var input = File.ReadAllText("Days/Day20Tests.Data.Part1.txt");
 			var day = new Day20();
 			var actual = day.Part2(input);
-			var expected = 20UL;
+			var expected = 273UL;
 			Assert.Equal(expected, actual);
 		}
 	}

@@ -23,6 +23,19 @@ namespace AdventOfCode.Year2020.Tests.Modules
 			.AppendLine("..###..###")
 			.ToString()
 			.Replace("\r", string.Empty);
+
+		public static string TestTileDataNoBorder => new StringBuilder()
+			.AppendLine("#..#....")
+			.AppendLine("...##..#")
+			.AppendLine("###.#...")
+			.AppendLine("#.##.###")
+			.AppendLine("#...#.##")
+			.AppendLine("#.#.#..#")
+			.AppendLine(".#....#.")
+			.AppendLine("##...#.#")
+			.ToString()
+			.Trim()
+			.Replace("\r", string.Empty);
 		[Fact]
 		public void FlipX()
 		{
@@ -83,6 +96,19 @@ namespace AdventOfCode.Year2020.Tests.Modules
 			Assert.Equal(s, tile.BorderSouth);
 			Assert.Equal(e, tile.BorderEast);
 			Assert.Equal(w, tile.BorderWest);
+		}
+
+
+		[Fact]
+		public void GetDataWithoutBorder()
+		{
+			var tileData = TestTileData;
+			var tile = new ImageTile(0, tileData);
+
+			var expected = TestTileDataNoBorder;
+			var actual = string.Join("\n", tile.GetDataWithoutBorder());
+
+			Assert.Equal(expected, actual);
 		}
 	}
 }

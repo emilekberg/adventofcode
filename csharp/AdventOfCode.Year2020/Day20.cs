@@ -14,6 +14,35 @@ namespace AdventOfCode.Year2020
 		public static string Reverse(this string s) => string.Join(string.Empty, s.ToCharArray().Reverse());
 	}
 	public record TileResult(int? NorthId, int? EastId, int? SouthId, int? WestId);
+	public record MonsterDefinition
+	{
+		public int Width { get; init; }
+		public int Height { get; init; }
+		public List<(int x, int y)> Points { get; private init; }
+		public MonsterDefinition()
+		{
+			var definition = new string[]
+			{
+				"                  # ",
+				"#    ##    ##    ###",
+				" #  #  #  #  #  #   "
+			};
+			Height = definition.Length;
+			Width = definition[0].Length;
+
+			Points = new List<(int x, int y)>();
+			for (int y = 0; y < Height; y++)
+			{
+				for (int x = 0; x < Width; x++)
+				{
+					if (definition[y][x] == '#')
+					{
+						Points.Add((x, y));
+					}
+				}
+			}
+		}
+	}
 	public class Day20 : BaseDay<string, ulong>, IDay
 	{
 		
@@ -69,18 +98,129 @@ namespace AdventOfCode.Year2020
 
 
 			RotateUntilTopLeftIsFound(tiles);
-			var orderedTiles = ProcessRelations(tiles);
+			var orderedTiles = ProcessRelations(tiles)
+				.Select(row => row
+					.Select(id => tiles
+						.Single(tile => tile.Id == id)
+					).ToList()
+				).ToList();
 
-			for(int y = 0; y < orderedTiles.Count; y++)
+			const int tileWidth = 8;
+			const int tileHeight = 8;
+
+			var width = orderedTiles.Count * tileWidth;
+			var height = orderedTiles[0].Count * tileHeight;
+
+			// creates a map.
+			var map = new List<List<char>>();
+			for(int i = 0; i < width * height; i++)
+			{
+				if (i % width == 0) map.Add(new List<char>());
+				map[^1].Add('!');
+			}
+
+			// fills the list with values.
+			for (int y = 0; y < orderedTiles.Count; y++)
 			{
 				for(int x = 0; x < orderedTiles[y].Count; x++)
 				{
-					var tile = tiles.Single(tile => tile.Id == orderedTiles[y][x]);
+					var tile = orderedTiles[y][x];
+					var data = tile.GetDataWithoutBorder();
+					for(int row = 0; row < data.Count; row++)
+					{
+						for(int col = 0; col < data[row].Length; col++)
+						{
+							map[(y * tileHeight) + row][(x * tileWidth) + col] = data[row][col];
+						}
+					}
 				}
-				Console.WriteLine();
 			}
 
-			return 0;
+			var mergedMap = new ImageTile(map);
+			var monsterDefinition = new MonsterDefinition();
+
+			var result = SearchForMonsters(mergedMap, monsterDefinition);
+			var numMonsterPositions = result.Count;
+			var numHashTags = map
+				.SelectMany(x => x)
+				.Where(x => x == '#')
+				.Count();
+			return (ulong)(numHashTags - numMonsterPositions);
+		}
+
+		/// <summary>
+		/// Loops through the map and looks for the defintition.
+		/// If no monster is found, it tries to rotate the map, and flipping it until one is found.
+		/// </summary>
+		/// <param name="map"></param>
+		/// <param name="monsterDefinition"></param>
+		/// <returns>The list of points where a monster was identified.</returns>
+		public List<(int x, int y)> SearchForMonsters(ImageTile map, MonsterDefinition monsterDefinition)
+		{
+			var monsterPositions = new List<(int x, int y)>();
+			var numRotations = 0;
+			var hasFlippedX = false;
+			do
+			{
+				for(int y = 0; y < map.Height; y++)
+				{
+					for(int x = 0; x < map.Width; x++)
+					{
+						if(!LookForMonsterAtPosition(map, x, y, monsterDefinition))
+						{
+							continue;
+						}
+						var positionToAdd = monsterDefinition.Points.Select(point => (point.x + x, point.y + y)).ToList();
+						monsterPositions.AddRange(positionToAdd);
+					}
+				}
+				if(monsterPositions.Count > 0)
+				{
+					return monsterPositions;
+				}
+
+				if(numRotations < 4)
+				{
+					map.DoRotateRight();
+					numRotations++;
+				}
+				else if(map.Rotation == 0 && !hasFlippedX)
+				{
+					map.DoFlipX();
+					numRotations = 0;
+					hasFlippedX = true;
+				}
+			}
+			while (true);
+		}
+		/// <summary>
+		/// Looks for a monster defined at the various positions.
+		/// </summary>
+		/// <param name="map"></param>
+		/// <param name="startX"></param>
+		/// <param name="startY"></param>
+		/// <param name="monsterDefinition"></param>
+		/// <returns>True if pattern following the description is found.</returns>
+		public bool LookForMonsterAtPosition(ImageTile map, int startX, int startY, MonsterDefinition monsterDefinition)
+		{
+			var mapHeight = map.Height;
+			var mapWidth = map.Width;
+			if(startX + monsterDefinition.Width > mapWidth)
+			{
+				return false;
+			}
+			if(startY + monsterDefinition.Height > mapHeight)
+			{
+				return false;
+			}
+			const char monsterSign = '#';
+			return monsterDefinition.Points.All(point =>
+			{
+				var x = startX + point.x;
+				var y = startY + point.y;
+
+				return map.Get(x,y) == monsterSign;
+			});
 		}
 
 		/// <summary>
@@ -259,22 +399,18 @@ namespace AdventOfCode.Year2020
 
 					if(rhs.HasEdge(lhs.BorderNorth))
 					{
-						if (northId.HasValue) throw new Exception("bajs med, allt sket sig");
 						northId = rhs.Id;
 					}
 					if (rhs.HasEdge(lhs.BorderSouth))
 					{
-						if (southId.HasValue) throw new Exception("bajs med, allt sket sig");
 						southId = rhs.Id;
 					}
 					if (rhs.HasEdge(lhs.BorderEast))
 					{
-						if (eastId.HasValue) throw new Exception("bajs med, allt sket sig");
 						eastId = rhs.Id;
 					}
 					if (rhs.HasEdge(lhs.BorderWest))
 					{
-						if (westId.HasValue) throw new Exception("bajs med, allt sket sig");
 						westId = rhs.Id;
 					}
 				}
