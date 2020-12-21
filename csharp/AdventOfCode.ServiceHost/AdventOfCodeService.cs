@@ -67,11 +67,10 @@ namespace AdventOfCode.ServiceHost
 
 				try
 				{
-					assemblies.ForEach(async day =>
+					foreach(var day in assemblies)
 					{
 						await day.ExecuteAsync();
-					});
-					
+					}
 				}
 				catch(Exception ex)
 				{
