@@ -16,9 +16,11 @@ namespace AdventOfCode.Year2020
 	public record TileResult(int? NorthId, int? EastId, int? SouthId, int? WestId);
 	public record MonsterDefinition
 	{
+		public static char MonsterPart = '#';
 		public int Width { get; init; }
 		public int Height { get; init; }
 		public List<(int x, int y)> Points { get; private init; }
+		
 		public MonsterDefinition()
 		{
 			var definition = new string[]
@@ -35,7 +37,7 @@ namespace AdventOfCode.Year2020
 			{
 				for (int x = 0; x < Width; x++)
 				{
-					if (definition[y][x] == '#')
+					if (definition[y][x] == MonsterPart)
 					{
 						Points.Add((x, y));
 					}
@@ -213,13 +215,12 @@ namespace AdventOfCode.Year2020
 			{
 				return false;
 			}
-			const char monsterSign = '#';
 			return monsterDefinition.Points.All(point =>
 			{
 				var x = startX + point.x;
 				var y = startY + point.y;
 
-				return map.Get(x,y) == monsterSign;
+				return map.Get(x,y) == MonsterDefinition.MonsterPart;
 			});
 		}
 
