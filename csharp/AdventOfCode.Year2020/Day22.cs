@@ -9,19 +9,18 @@ namespace AdventOfCode.Year2020
 {
 	public class Day22 : BaseDay<string, int>, IDay
 	{
-		public List<int> GetDeck(string input)
-		{
-			return input
+		public Queue<int> GetDeck(string input) => new Queue<int>(input
 				.Split("\n", StringSplitOptions.RemoveEmptyEntries)
 				.Skip(1)
 				.Select(int.Parse)
-				.ToList();
-		}
+			);
 		public override int Part1(string input)
 		{
-			var split = input.Replace("\r", string.Empty).Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
-			var deckPlayer1 = new Queue<int>(GetDeck(split[0]));
-			var deckPlayer2 = new Queue<int>(GetDeck(split[1]));
+			var split = input
+				.Replace("\r", string.Empty)
+				.Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
+			var deckPlayer1 = GetDeck(split[0]);
+			var deckPlayer2 = GetDeck(split[1]);
 
 			do
 			{
@@ -54,8 +53,8 @@ namespace AdventOfCode.Year2020
 		public override int Part2(string input)
 		{
 			var split = input.Replace("\r", string.Empty).Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
-			var deckPlayer1 = new Queue<int>(GetDeck(split[0]));
-			var deckPlayer2 = new Queue<int>(GetDeck(split[1]));
+			var deckPlayer1 = GetDeck(split[0]);
+			var deckPlayer2 = GetDeck(split[1]);
 
 			var winner = RecursiveCombat(deckPlayer1, deckPlayer2);
 			var amount = winner
@@ -69,6 +68,7 @@ namespace AdventOfCode.Year2020
 		{
 			var previousRounds = new HashSet<string>();
 			var round = 0;
+			Queue<int> winner;
 			do
 			{
 				round++;
@@ -83,7 +83,7 @@ namespace AdventOfCode.Year2020
 				// gets the next cards to play.
 				var playedP1 = deckPlayer1.Dequeue();
 				var playedP2 = deckPlayer2.Dequeue();
-				Queue<int> winner = null;
+
 				// if both players have enough cards to play another recursive game.
 				if(deckPlayer1.Count >= playedP1 && deckPlayer2.Count >= playedP2)
 				{
@@ -99,6 +99,7 @@ namespace AdventOfCode.Year2020
 					// otherwise check score as normally.
 					winner = playedP1 > playedP2 ? deckPlayer1 : deckPlayer2;
 				}
+				// Add cards back to the winners deck, with the winning card being in front.
 				if (winner == deckPlayer1)
 				{
 					deckPlayer1.Enqueue(playedP1);
@@ -109,12 +110,10 @@ namespace AdventOfCode.Year2020
 					deckPlayer2.Enqueue(playedP2);
 					deckPlayer2.Enqueue(playedP1);
 				}
-
-				
 			}
 			while (deckPlayer1.Count > 0 && deckPlayer2.Count > 0);
 
-			return deckPlayer1.Count > 0 ? deckPlayer1 : deckPlayer2;
+			return winner;
 		}
 	}
 }
