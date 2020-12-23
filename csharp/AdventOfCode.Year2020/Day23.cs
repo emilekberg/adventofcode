@@ -125,8 +125,6 @@ namespace AdventOfCode.Year2020
 
 		public List<uint> CrabGameCustomLinkedList(List<uint> numbers, ulong numMoves)
 		{
-			var sortedNumbers = numbers.ToList();
-			sortedNumbers.Sort();
 			LL cups = new LL(numbers);
 			var currentNode = cups.Head;
 			var smallestNumber = numbers.Min();
@@ -137,8 +135,10 @@ namespace AdventOfCode.Year2020
 				for (int i = 0; i < 3; ++i)
 				{
 					// remove head
-					if(currentNode.Next == null) pickupNodes.Add(cups.RemoveHead());
-					else pickupNodes.Add(cups.RemoveNext(currentNode));
+					if(currentNode.Next == null) 
+						pickupNodes.Add(cups.RemoveHead());
+					else 
+						pickupNodes.Add(cups.RemoveNext(currentNode));
 				}
 
 				// find the destination node, nearest smallest node from the current value.
@@ -159,9 +159,9 @@ namespace AdventOfCode.Year2020
 				// Add the nodes after the destination node.
 				for (int i = 0; i < 3; i++)
 				{
-					var a = pickupNodes[i];
-					cups.AddAfterNode(destinationNode, a);
-					destinationNode = a;
+					var nodeToAdd = pickupNodes[i];
+					cups.AddAfterNode(destinationNode, nodeToAdd);
+					destinationNode = nodeToAdd;
 				}
 				currentNode = currentNode.Next ?? cups.Head;
 			}

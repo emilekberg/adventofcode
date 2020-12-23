@@ -18,7 +18,7 @@ namespace AdventOfCode.Year2020.Tests.Days
 		};
 		[Theory]
 		[MemberData(nameof(Part1Data))]
-		public void Part1(string[] input, int expected)
+		public void Part1(string[] input, ulong expected)
 		{
 			var day = new Day10();
 			var actual = day.Part1(input);
@@ -33,7 +33,7 @@ namespace AdventOfCode.Year2020.Tests.Days
 			};
 		[Theory]
 		[MemberData(nameof(Part2Data))]
-		public void Part2(string[] input, int expected)
+		public void Part2(string[] input, ulong expected)
 		{
 			var day = new Day10();
 			var actual = day.Part2(input);
