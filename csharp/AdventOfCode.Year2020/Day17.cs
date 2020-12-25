@@ -32,8 +32,6 @@ namespace AdventOfCode.Year2020
 
 			for (int cycle = 0; cycle < 6; cycle++)
 			{
-				if(false) DrawCubes(cycle);
-
 				var toAdd = new List<(int x, int y, int z)>();
 				var toRemove = new List<(int x, int y, int z)>();
 				var neightboursToParse = new List<(int x, int y, int z)>();
@@ -157,7 +155,7 @@ namespace AdventOfCode.Year2020
 			return !IsCubeActive(x, y, z, w);
 		}
 
-		public IEnumerable<(int x, int y, int z, int w)> GetNeighbourCubes(int x, int y, int z, int w)
+		public static IEnumerable<(int x, int y, int z, int w)> GetNeighbourCubes(int x, int y, int z, int w)
 		{
 			var result = new List<(int x, int y, int z, int w)>();
 			for (int dx = -1; dx < 2; dx++)
@@ -177,7 +175,7 @@ namespace AdventOfCode.Year2020
 			return result;
 		}
 
-		public IEnumerable<(int x, int y, int z)> GetNeighbourCubes(int x, int y, int z)
+		public static IEnumerable<(int x, int y, int z)> GetNeighbourCubes(int x, int y, int z)
 		{
 			var result = new List<(int x, int y, int z)>();
 			for(int dx = -1; dx < 2; dx++)

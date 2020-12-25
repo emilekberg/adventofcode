@@ -25,13 +25,13 @@ hgt:179cm
 hcl:#cfa07d eyr:2025 pid:166559648
 iyr:2011 ecl:brn hgt:59in";
       var passportFactory = new PassportFactory();
-      var passports = passportFactory.Create(input);
+      var passports = PassportFactory.Create(input);
 
       var passportValidator = new PassportValidator();
       var validPassports = passports
         .Where(passport => passportValidator.HasRequiredFields(passport))
         .ToList();
-      Assert.Equal(2, validPassports.Count());
+      Assert.Equal(2, validPassports.Count);
     }
     [Theory]
     [InlineData(@"eyr:1972 cid:100
@@ -62,13 +62,13 @@ iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719", 4)]
         public void HasValidFields(string input, int numValid)
 	    {
             var passportFactory = new PassportFactory();
-            var passports = passportFactory.Create(input);
+            var passports = PassportFactory.Create(input);
 
             var passportValidator = new PassportValidator();
             var actual = passports
                 .Where(passport => passportValidator.ValidateFields(passport))
                 .ToList();
-            Assert.Equal(numValid, actual.Count());
+            Assert.Equal(numValid, actual.Count);
         }
 
         [Theory]

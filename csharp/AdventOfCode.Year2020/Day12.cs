@@ -45,6 +45,7 @@ namespace AdventOfCode.Year2020
 						"L" => Direction.Left,
 						"F" => Direction.Forward,
 						"R" => Direction.Right,
+						_ => throw new NotImplementedException()
 					};
 					return (direction, amount);
 				})
@@ -122,6 +123,7 @@ namespace AdventOfCode.Year2020
 						"L" => Direction.Left,
 						"F" => Direction.Forward,
 						"R" => Direction.Right,
+						_ => throw new NotImplementedException()
 					};
 					return (direction, amount);
 				})

@@ -7,7 +7,7 @@ namespace AdventOfCode.Year2020.Modules
 {
 	public class PassportFactory
 	{
-		public List<Passport> Create(string input)
+		public static List<Passport> Create(string input)
 		{
 			var passports = new List<Passport>();
 			var passport = new Passport();
@@ -17,7 +17,7 @@ namespace AdventOfCode.Year2020.Modules
 			  .ForEach(row =>
 			  {
 			// blank line is the end of a passport.
-			if (row.Count() == 0)
+			if (row.Length == 0)
 				  {
 					  passports.Add(passport);
 					  passport = new Passport();
@@ -31,7 +31,7 @@ namespace AdventOfCode.Year2020.Modules
 			return passports;
 		}
 
-		public Passport FillPassportData(Passport passport, string data)
+		public static Passport FillPassportData(Passport passport, string data)
 		{
 			var split = data.Split(' ');
 			split.ToList()
@@ -70,7 +70,7 @@ namespace AdventOfCode.Year2020.Modules
 							  break;
 					  }
 				  }
-				  catch (Exception ex)
+				  catch (Exception)
 				  {
 					  Console.WriteLine($"{key}:{value}");
 					  throw;

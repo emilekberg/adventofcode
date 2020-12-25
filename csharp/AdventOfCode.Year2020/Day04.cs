@@ -18,7 +18,7 @@ namespace AdventOfCode.Year2020
 		{
 			var factory = new PassportFactory();
 			var validator = new PassportValidator();
-			var passports = factory.Create(input);
+			var passports = PassportFactory.Create(input);
 			var validPassports = passports.Where(passport => validator.HasRequiredFields(passport));
 			return validPassports.Count();
 		}
@@ -27,7 +27,7 @@ namespace AdventOfCode.Year2020
 		{
 			var factory = new PassportFactory();
 			var validator = new PassportValidator();
-			var passports = factory.Create(input);
+			var passports = PassportFactory.Create(input);
 			var validPassports = passports
 				.Where(passport => validator.ValidateFields(passport));
 			return validPassports.Count();

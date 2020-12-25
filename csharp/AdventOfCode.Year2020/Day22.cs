@@ -9,7 +9,7 @@ namespace AdventOfCode.Year2020
 {
 	public class Day22 : BaseDay<string, int>, IDay
 	{
-		public Queue<int> GetDeck(string input) => new Queue<int>(input
+		public static Queue<int> GetDeck(string input) => new Queue<int>(input
 				.Split("\n", StringSplitOptions.RemoveEmptyEntries)
 				.Skip(1)
 				.Select(int.Parse)
