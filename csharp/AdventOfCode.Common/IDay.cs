@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace AdventOfCode.Common
+namespace AdventOfCode.Common;
+
+public interface IDay
 {
-	public interface IDay
-	{
-		Task ExecuteAsync();
-	}
+    Task ExecuteAsync();
 }

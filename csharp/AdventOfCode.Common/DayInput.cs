@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Common
+namespace AdventOfCode.Common;
+
+public class DayInput
 {
-	public class DayInput
-	{
-		
-	}
+
 }

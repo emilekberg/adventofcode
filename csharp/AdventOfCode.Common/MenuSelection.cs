@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Common
+namespace AdventOfCode.Common;
+
+public class MenuSelectionResult
 {
-	public class MenuSelectionResult
-	{
-		public int Index { get; set; }
-		public string Value { get; set; }
-	}
+    public int Index { get; set; }
+    public string Value { get; set; }
 }
