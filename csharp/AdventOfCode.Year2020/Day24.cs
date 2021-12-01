@@ -10,9 +10,10 @@ namespace AdventOfCode.Year2020
 {
 	public class Day24 : BaseDay<string[],int>, IDay
 	{
+		private static string[] Direction = { "e", "se", "sw", "w", "nw", "ne" };
 		public static List<List<string>> ParseInput(string[] input) => input
 				.Select(x =>
-					Regex.Split(x, @"(e)|(se)|(sw)|(w)|(nw)|(ne)")
+					Regex.Split(x, string.Join("|", Direction.Select(x => $"({x})")))
 					.Where(x => !string.IsNullOrEmpty(x))
 					.ToList()
 				).ToList();

@@ -16,17 +16,38 @@ namespace AdventOfCode.Year2020
 		public override int Part1(string[] input)
 		{
 			var numbers = input.Select(int.Parse).ToList();
-			var sumFinder = new SumFinder(numbers);
-			List<int> parts = sumFinder.FindSum(2020, 2);
-			return parts.Aggregate(1, (acc, next) => acc * next);
+			
+			foreach(var a in numbers)
+			{
+				foreach(var b in numbers)
+				{
+					if(a+b == 2020)
+					{
+						return a * b;
+					}
+				}
+			}
+
+			return -1;
 		}
 
 		public override int Part2(string[] input)
 		{
 			var numbers = input.Select(int.Parse).ToList();
-			var sumFinder = new SumFinder(numbers);
-			List<int> parts = sumFinder.FindSum(2020, 3);
-			return parts.Aggregate(1, (acc, next) => acc * next);
+			foreach (var a in numbers)
+			{
+				foreach (var b in numbers)
+				{
+					foreach (var c in numbers)
+					{
+						if (a + b + c== 2020)
+						{
+							return a * b * c;
+						}
+					}
+				}
+			}
+			return 0;
 		}
 	}
 }

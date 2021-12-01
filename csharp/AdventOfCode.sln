@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30709.132
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Year2018", "AdventOfCode.Year2018\AdventOfCode.Year2018.csproj", "{2558FDE3-B933-45F3-A596-C5C20E898091}"
 EndProject
@@ -9,11 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.ServiceHost", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Common", "AdventOfCode.Common\AdventOfCode.Common.csproj", "{D753B490-9F46-47A6-A946-45FE8771D282}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Year2018.Tests", "AdventOfCode.Year2018.Tests\AdventOfCode.Year2018.Tests.csproj", "{0EEB4A7D-B53B-4D32-BEBF-BB6D7608EC84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Year2018.Tests", "AdventOfCode.Year2018.Tests\AdventOfCode.Year2018.Tests.csproj", "{0EEB4A7D-B53B-4D32-BEBF-BB6D7608EC84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Year2020", "AdventOfCode.Year2020\AdventOfCode.Year2020.csproj", "{0F0FFE9A-2A3E-429A-ACBE-EF0E6E298372}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Year2020", "AdventOfCode.Year2020\AdventOfCode.Year2020.csproj", "{0F0FFE9A-2A3E-429A-ACBE-EF0E6E298372}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Year2020.Tests", "AdventOfCode.Year2020.Tests\AdventOfCode.Year2020.Tests.csproj", "{C8963434-0374-4C90-BC82-E6BD7DCAD76F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Year2020.Tests", "AdventOfCode.Year2020.Tests\AdventOfCode.Year2020.Tests.csproj", "{C8963434-0374-4C90-BC82-E6BD7DCAD76F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Year2021", "AdventOfCode.Year2021\AdventOfCode.Year2021.csproj", "{12BD3548-382B-40F7-9027-0E269761A4D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Year2021.Tests", "AdventOfCode.Year2021.Tests\AdventOfCode.Year2021.Tests.csproj", "{64D62228-213C-42B0-BAD3-B8D258D4330F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{C8963434-0374-4C90-BC82-E6BD7DCAD76F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8963434-0374-4C90-BC82-E6BD7DCAD76F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8963434-0374-4C90-BC82-E6BD7DCAD76F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12BD3548-382B-40F7-9027-0E269761A4D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12BD3548-382B-40F7-9027-0E269761A4D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12BD3548-382B-40F7-9027-0E269761A4D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12BD3548-382B-40F7-9027-0E269761A4D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64D62228-213C-42B0-BAD3-B8D258D4330F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64D62228-213C-42B0-BAD3-B8D258D4330F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64D62228-213C-42B0-BAD3-B8D258D4330F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64D62228-213C-42B0-BAD3-B8D258D4330F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
