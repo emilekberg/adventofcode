@@ -4,34 +4,29 @@ using Xunit;
 
 namespace AdventOfCode.Year2021.Tests;
 
-public class Day01Test
+public class Day02Test
 {
-	string[] _input = new string[] {
-		"199",
-		"200",
-		"208",
-		"210",
-		"200",
-		"207",
-		"240",
-		"269",
-		"260",
-		"263"
+	public string[] _input = new string[] {
+		"forward 5",
+		"down 5",
+		"forward 8",
+		"up 3",
+		"down 8",
+		"forward 2"
 	};
 	[Fact]
 	public void Part1()
 	{
-		var expected = 7;
-
-		var day = new Day01();
+		var expected = 150;
+		var day = new Day02();
 		var actual = day.Part1(_input);
 		Assert.Equal(expected, actual);
 	}
 	[Fact]
 	public void Part2()
 	{
-		var expected = 5;
-		var day = new Day01();
+		var expected = 900;
+		var day = new Day02();
 		var actual = day.Part2(_input);
 		Assert.Equal(expected, actual);
 	}
