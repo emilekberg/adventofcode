@@ -4,7 +4,7 @@ namespace AdventOfCode.Year2021;
 
 /// <Summary>
 /// https://adventofcode.com/2021/day/2
-/// </Summary>
+/// </Summary> 
 public class Day02 : BaseDay<string[], long>, IDay
 {
 	public override long Part1(string[] input)
