@@ -6,28 +6,43 @@ namespace AdventOfCode.Year2021;
 /// </Summary> 
 public class Day04 : BaseDay<string[], int>, IDay
 {
-	public (int[] numbersToDrawList, List<BingoBoard> boards) ParseInput(string[] input)
+	public static (int[] numbersToDrawList, List<BingoBoard> boards) ParseInput(string[] input)
 	{
 		var queue = new Queue<string>(input);
-		var numbersToDraw = queue.Dequeue().Split(',').Select(int.Parse).ToArray();
 
-		var boards = new List<BingoBoard>();
-		BingoBoard? currentBoard = null;
-		while (queue.TryDequeue(out var result))
+		var numbersToDraw = input
+			.Take(1)
+			.Single()
+			.Split(',')
+			.Select(int.Parse)
+			.ToArray();
+
+		// converts input into a list of 2d arrays (bingo boards).
+		var boardData = input
+			.Where(x => !string.IsNullOrWhiteSpace(x))  // remove spacers and empty lines
+			.Skip(1)                // skip the numbers to draw
+			.Chunk(5)               // 5 in each bingo board
+			.Select(chunk => chunk  // convert string to int
+				.Select(x => x
+					.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+					.Select(int.Parse)
+					.ToArray()
+				).ToArray()
+			).ToList();
+
+		int i = 0;
+		var boards = boardData.Select(board =>
 		{
-			if (string.IsNullOrWhiteSpace(result))
+			var bingoBoard = new BingoBoard(++i);
+			foreach (var row in board)
 			{
-				currentBoard = new BingoBoard(boards.Count + 1);
-				boards.Add(currentBoard);
-				continue;
+				bingoBoard.AddRow(row);
 			}
-
-			var row = result.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
-			currentBoard?.AddRow(row);
-		}
+			return bingoBoard;
+		}).ToList();
 		return (numbersToDraw, boards);
 	}
-	public List<(int number, BingoBoard board)> PlayBingoGame(int[] numbersToDraw, List<BingoBoard> boards)
+	public static List<(int number, BingoBoard board)> PlayBingoGame(int[] numbersToDraw, List<BingoBoard> boards)
 	{
 		var winningBoardDraws = new List<(int number, BingoBoard board)>();
 		foreach (var number in numbersToDraw)
@@ -99,7 +114,7 @@ public class BingoBoard
 	}
 	public (int row, int col)? AddDrawnNumber(int number)
 	{
-		if(!NumberPositions.TryGetValue(number, out var id))
+		if (!NumberPositions.TryGetValue(number, out var id))
 		{
 			return null;
 		}
@@ -110,7 +125,7 @@ public class BingoBoard
 	{
 		var markedColumns = 0;
 		var markedRows = 0;
-		for(int i = 0; i < NumberOfRows; i++)
+		for (int i = 0; i < NumberOfRows; i++)
 		{
 			markedRows += PositionHadNumberDrawn(i, hintCol) ? 1 : 0;
 			markedColumns += PositionHadNumberDrawn(hintRow, i) ? 1 : 0;
