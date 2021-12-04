@@ -27,41 +27,9 @@ public class Day04 : BaseDay<string[], int>, IDay
 		}
 		return (numbersToDraw, boards);
 	}
-	public override int Part1(string[] input)
+	public List<(int number, BingoBoard board)> PlayBingoGame(int[] numbersToDraw, List<BingoBoard> boards)
 	{
-		var (numbersToDraw, boards) = ParseInput(input);
-		bool winFound = false;
-		BingoBoard winningBoard = null;
-		int winningNumber = 0;
-		foreach(var number in numbersToDraw)
-		{
-			foreach(var board in boards)
-			{
-				var id = board.AddDrawnNumber(number);
-				if (!id.HasValue) continue;
-				var row = id.Value.row;
-				var col = id.Value.col;
-				winFound = board.CheckForWinWithHints(row, col);
-				if(winFound)
-				{
-					winningBoard = board;
-					winningNumber = number;
-					break;
-				}
-			}
-			if (winFound) break;
-		}
-		var score = winningBoard.GetSumOfUnmarkedNumbers();
-		return score * winningNumber;
-	}
-
-	public override int Part2(string[] input)
-	{
-		var (numbersToDraw, boards) = ParseInput(input);
-		bool winFound = false;
-		BingoBoard winningBoard = null;
-		int winningNumber = 0;
-		List<(int number, BingoBoard board)> winningBoardDraws = new List<(int number, BingoBoard board)>();
+		var winningBoardDraws = new List<(int number, BingoBoard board)>();
 		foreach (var number in numbersToDraw)
 		{
 			var boardsToRemove = new List<BingoBoard>();
@@ -72,13 +40,10 @@ public class Day04 : BaseDay<string[], int>, IDay
 				if (!id.HasValue) continue;
 				var row = id.Value.row;
 				var col = id.Value.col;
-				winFound = board.CheckForWinWithHints(row, col);
-				if (winFound) 
+				if (board.CheckForWinWithHints(row, col))
 				{
 					winningBoardDraws.Add((number, board));
-					winningBoard = board;
-					winningNumber = number;
-					boardsToRemove.Add(winningBoard);
+					boardsToRemove.Add(board);
 				}
 			}
 			if (boardsToRemove.Count > 0)
@@ -90,8 +55,22 @@ public class Day04 : BaseDay<string[], int>, IDay
 				}
 			}
 		}
-		var score = winningBoard.GetSumOfUnmarkedNumbers();
-		return score * winningNumber;
+		return winningBoardDraws;
+	}
+	public override int Part1(string[] input)
+	{
+		var (numbersToDraw, boards) = ParseInput(input);
+		var result = PlayBingoGame(numbersToDraw, boards);
+		var firstDraw = result.First();
+		return firstDraw.board.GetSumOfUnmarkedNumbers() * firstDraw.number;
+	}
+
+	public override int Part2(string[] input)
+	{
+		var (numbersToDraw, boards) = ParseInput(input);
+		var result = PlayBingoGame(numbersToDraw, boards);
+		var lastDraw = result.Last();
+		return lastDraw.board.GetSumOfUnmarkedNumbers() * lastDraw.number;
 	}
 }
 
@@ -100,8 +79,9 @@ public class BingoBoard
 {
 	public int Id { get; set; }
 	public Dictionary<int, (int row, int col)> NumberPositions = new();
-	public Dictionary<(int row, int col), bool> NumberStatus = new();
+	public Dictionary<(int row, int col), bool> NumbersMarked = new();
 	private int NumberOfRows = 0;
+	private int NumberOfColumns = 0;
 	public BingoBoard(int id)
 	{
 		Id = id;
@@ -109,12 +89,13 @@ public class BingoBoard
 	public void AddRow(int[] numbers)
 	{
 		int row = NumberOfRows++;
-		for(int col = 0; col < numbers.Length; col++)
+		NumberOfColumns = numbers.Length;
+		for (int col = 0; col < numbers.Length; col++)
 		{
 			var id = (row, col);
 			var number = numbers[col];
 			NumberPositions.Add(number, id);
-			NumberStatus.Add(id, false);
+			NumbersMarked.Add(id, false);
 		}
 	}
 	public (int row, int col)? AddDrawnNumber(int number)
@@ -123,32 +104,25 @@ public class BingoBoard
 		{
 			return null;
 		}
-		NumberStatus[id] = true;
+		NumbersMarked[id] = true;
 		return id;
 	}
 	public bool CheckForWinWithHints(int hintRow, int hintCol)
 	{
-		var result = true;
-		for(int row = 0; row < NumberOfRows; row++)
+		var markedColumns = 0;
+		var markedRows = 0;
+		for(int i = 0; i < NumberOfRows; i++)
 		{
-			result = result && PositionHadNumberDrawn(row, hintCol);
+			markedRows += PositionHadNumberDrawn(i, hintCol) ? 1 : 0;
+			markedColumns += PositionHadNumberDrawn(hintRow, i) ? 1 : 0;
 		}
-		if(result)
-		{
-			return true;
-		}
-		result = true;
-		for (int col = 0; col < NumberOfRows; col++)
-		{
-			result = result && PositionHadNumberDrawn(hintRow, col);
-		}
-		return result;
+		return (markedRows == NumberOfRows || markedColumns == NumberOfColumns);
 	}
 
 	public bool PositionHadNumberDrawn(int row, int col)
 	{
 		var id = (row, col);
-		var hadNumberDrawn = NumberStatus[id];
+		var hadNumberDrawn = NumbersMarked[id];
 		return hadNumberDrawn;
 	}
 	public int GetSumOfUnmarkedNumbers()
@@ -157,7 +131,7 @@ public class BingoBoard
 		{
 			var id = kvp.Value;
 			var number = kvp.Key;
-			var isMarked = NumberStatus[id];
+			var isMarked = NumbersMarked[id];
 			if (isMarked) return 0;
 			return number;
 		}).Sum();
