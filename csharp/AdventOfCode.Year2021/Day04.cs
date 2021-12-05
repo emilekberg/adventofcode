@@ -2,10 +2,25 @@
 
 namespace AdventOfCode.Year2021;
 /// <Summary>
-/// https://adventofcode.com/2021/day/3
+/// https://adventofcode.com/2021/day/4
 /// </Summary> 
 public class Day04 : BaseDay<string[], int>, IDay
 {
+	public override int Part1(string[] input)
+	{
+		var (numbersToDraw, boards) = ParseInput(input);
+		var result = PlayBingoGame(numbersToDraw, boards);
+		var (number, board) = result.First();
+		return board.GetSumOfUnmarkedNumbers() * number;
+	}
+
+	public override int Part2(string[] input)
+	{
+		var (numbersToDraw, boards) = ParseInput(input);
+		var result = PlayBingoGame(numbersToDraw, boards);
+		var (number, board) = result.Last();
+		return board.GetSumOfUnmarkedNumbers() * number;
+	}
 	public static (int[] numbersToDrawList, List<BingoBoard> boards) ParseInput(string[] input)
 	{
 		var queue = new Queue<string>(input);
@@ -21,14 +36,12 @@ public class Day04 : BaseDay<string[], int>, IDay
 		var boardData = input
 			.Where(x => !string.IsNullOrWhiteSpace(x))  // remove spacers and empty lines
 			.Skip(1)                // skip the numbers to draw
-			.Chunk(5)               // 5 in each bingo board
-			.Select(chunk => chunk  // convert string to int
-				.Select(x => x
-					.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-					.Select(int.Parse)
-					.ToArray()
-				).ToArray()
-			).ToList();
+			.Select(x => x			// convert numbers to string
+				.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+				.Select(int.Parse)
+				.ToArray()
+			).Chunk(5)              // 5x5 in each bingo board
+			.ToList();
 
 		int i = 0;
 		var boards = boardData.Select(board =>
@@ -70,21 +83,6 @@ public class Day04 : BaseDay<string[], int>, IDay
 			}
 		}
 		return winningBoardDraws;
-	}
-	public override int Part1(string[] input)
-	{
-		var (numbersToDraw, boards) = ParseInput(input);
-		var result = PlayBingoGame(numbersToDraw, boards);
-		var (number, board) = result.First();
-		return board.GetSumOfUnmarkedNumbers() * number;
-	}
-
-	public override int Part2(string[] input)
-	{
-		var (numbersToDraw, boards) = ParseInput(input);
-		var result = PlayBingoGame(numbersToDraw, boards);
-		var (number, board) = result.Last();
-		return board.GetSumOfUnmarkedNumbers() * number;
 	}
 }
 
@@ -136,14 +134,14 @@ public class BingoBoard
 	public bool PositionHadNumberDrawn(int row, int col) => NumbersMarked[(row, col)];
 	public int GetSumOfUnmarkedNumbers()
 	{
-		var result = NumberPositions.Select(kvp =>
+		var result = NumberPositions.Sum(kvp =>
 		{
 			var id = kvp.Value;
 			var number = kvp.Key;
 			var isMarked = NumbersMarked[id];
 			if (isMarked) return 0;
 			return number;
-		}).Sum();
+		});
 
 		return result;
 	}
