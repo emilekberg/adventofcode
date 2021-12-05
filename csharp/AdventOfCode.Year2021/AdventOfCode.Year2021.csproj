@@ -11,9 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\Year2021 - Copy.Day05.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Data\Year2021.Day05.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

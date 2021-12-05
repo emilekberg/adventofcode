@@ -42,8 +42,8 @@ public class Day05 : BaseDay<string[], int>, IDay
 		{
 			var diffX = x2 - x1;
 			var diffY = y2 - y1;
-			var deltaX = GetDirection(diffX);
-			var deltaY = GetDirection(diffY);
+			var deltaX = Math.Sign(diffX);
+			var deltaY = Math.Sign(diffY);
 
 			var x = x1;
 			var y = y1;
@@ -62,12 +62,5 @@ public class Day05 : BaseDay<string[], int>, IDay
 		}
 		var numberOfOverlaps = dictionary.Values.Count(value => value > 1);
 		return numberOfOverlaps;
-	}
-
-	public static int GetDirection(int diff)
-	{
-		if (diff > 0) return 1;
-		else if (diff < 0) return -1;
-		return 0;
 	}
 }
