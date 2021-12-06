@@ -1,5 +1,4 @@
 ﻿using AdventOfCode.Common;
-using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Year2021;
@@ -20,10 +19,8 @@ public class Day05 : BaseDay<string[], int>, IDay
 
 	public static int Process(string[] input, bool removeDiagonals)
 	{
-		var regex = new Regex(@"(\d+)\,(\d+)\s\-\>\s(\d+)\,(\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		
-
-		var linesToFilter = input.Select(line =>
+		var regex = new Regex(@"(\d+),(\d+)\s->\s(\d+),(\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		var lines = input.Select(line =>
 		{
 			var groups = regex.Match(line).Groups;
 			var x1 = int.Parse(groups[1].Value);
@@ -34,10 +31,9 @@ public class Day05 : BaseDay<string[], int>, IDay
 		});
 		if(removeDiagonals)
 		{
-			linesToFilter = linesToFilter.Where(line => line.x1 == line.x2 || line.y1 == line.y2);
+			lines = lines.Where(line => line.x1 == line.x2 || line.y1 == line.y2);
 		}
-		var lines = linesToFilter.ToList();
-		var dictionary = new Dictionary<(int x, int y), int>();
+		var grid = new Dictionary<(int x, int y), int>();
 		foreach (var (x1, y1, x2, y2) in lines)
 		{
 			var diffX = x2 - x1;
@@ -47,20 +43,17 @@ public class Day05 : BaseDay<string[], int>, IDay
 
 			var x = x1;
 			var y = y1;
-			var numberOfPointsInLine = Math.Abs(diffX != 0 ? diffX : diffY);
-			for(int i = 0; i <= numberOfPointsInLine; i++)
+			var length = Math.Abs(diffX != 0 ? diffX : diffY);
+			for(int i = 0; i <= length; i++)
 			{
 				var position = (x, y);
-				if (!dictionary.TryGetValue(position, out var count))
-				{
-					count = 0;
-				}
-				dictionary[position] = ++count;
+				if (!grid.TryGetValue(position, out var count)) count = 0;
+				grid[position] = ++count;
 				x += deltaX;
 				y += deltaY;
 			}
 		}
-		var numberOfOverlaps = dictionary.Values.Count(value => value > 1);
+		var numberOfOverlaps = grid.Values.Count(value => value > 1);
 		return numberOfOverlaps;
 	}
 }
