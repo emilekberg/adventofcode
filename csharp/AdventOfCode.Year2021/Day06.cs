@@ -32,7 +32,6 @@ public class Day06 : BaseDay<string, long>, IDay
 			sixth = sixth.Next;
 			sixth.ValueRef += fishesToAdd;
 		}
-		var totalNumberOfFishes = list.Sum();
-		return totalNumberOfFishes;
+		return list.Sum();
 	}
 }
