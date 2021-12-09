@@ -25,7 +25,7 @@ public class Day09Test
 	[Fact]
 	public void Part2()
 	{
-		var expected = 15;
+		var expected = 1134;
 		var day = new Day09();
 		var actual = day.Part2(_input);
 		Assert.Equal(expected, actual);

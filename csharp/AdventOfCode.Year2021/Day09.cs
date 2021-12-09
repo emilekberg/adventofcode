@@ -30,35 +30,45 @@ public class Day09 : BaseDay<string[], long>, IDay
 			.ToArray()
 		).ToArray();
 
-		var result = 0;
 		var points = GetDeepestPoints(values);
 
 
-		var visited = new HashSet<(int x, int y)>();
+		var count = new List<int>();
 		foreach(var (x, y) in points)
 		{
-			TraverseBasin(values, x, y);
+			var visited = new HashSet<(int x, int y)>();
+			visited.Add((x, y));
+			TraverseBasin(values, x, y, visited);
+			count.Add(visited.Count());
 		}
 
-
-		// for each point traverse neighbours until you find a 9.
-
-
+		var result = points.Select(point =>
+		{
+			var visited = new HashSet<(int x, int y)>();
+			visited.Add((point.x, point.y));
+			TraverseBasin(values, point.x, point.y, visited);
+			return visited.Count();
+		}).OrderByDescending(x => x)
+		.Take(3)
+		.Aggregate(1, (acc, next) => acc *= next);
 		return result;
 	}
-	public static void TraverseBasin(int[][] data, int x, int y)
+	public static void TraverseBasin(int[][] data, int x, int y, HashSet<(int x, int y)> visited)
 	{
-		var visited = new HashSet<(int x, int y)>();
-		var value = data[y][x];
-		var neighbours = GetNeighbours(data, x, y);
-		var toVisit = new List<(int x, int y)>();
-		foreach(var neighbour in neighbours)
+		var neighbours = GetNeighbours(data, x, y).Except(visited).ToList();
+
+		for(int i = 0; i < neighbours.Count; i++)
 		{
+			var value = data[y][x];
+			var neighbour = neighbours[i];
 			var neighbourValue = data[neighbour.y][neighbour.x];
-			if (neighbourValue > value && neighbourValue != 9 && !visited.Contains(neighbour))
+			if (neighbourValue > value && neighbourValue < 9)
 			{
-				toVisit.Add(neighbour);
 				visited.Add(neighbour);
+			}
+			if (neighbourValue != 9)
+			{
+				TraverseBasin(data, neighbour.x, neighbour.y, visited);
 			}
 		}
 	}
