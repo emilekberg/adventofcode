@@ -38,7 +38,7 @@ public class Day09 : BaseDay<string[], long>, IDay
 		{
 			var visited = new HashSet<(int x, int y)>();
 			visited.Add((x, y));
-			TraverseBasin(values, x, y, visited);
+			GetBasinSize(values, x, y, visited);
 			count.Add(visited.Count());
 		}
 
@@ -46,29 +46,43 @@ public class Day09 : BaseDay<string[], long>, IDay
 		{
 			var visited = new HashSet<(int x, int y)>();
 			visited.Add((point.x, point.y));
-			TraverseBasin(values, point.x, point.y, visited);
-			return visited.Count();
-		}).OrderByDescending(x => x)
-		.Take(3)
-		.Aggregate(1, (acc, next) => acc *= next);
+			GetBasinSize(values, point.x, point.y, visited);
+			return visited.Count;
+		})
+			.OrderByDescending(x => x)
+			.Take(3)
+			.Aggregate(1, (acc, next) => acc *= next);
 		return result;
 	}
-	public static void TraverseBasin(int[][] data, int x, int y, HashSet<(int x, int y)> visited)
+	public static void GetBasinSize(int[][] data, int x, int y, HashSet<(int x, int y)> visited)
 	{
 		var neighbours = GetNeighbours(data, x, y).Except(visited).ToList();
-
-		for(int i = 0; i < neighbours.Count; i++)
+		// to avoid recursion, create a list of neighbours to look into.
+		var listToTraverse = new List<((int x, int y) position, List<(int x, int y)> neighbours)>()
 		{
-			var value = data[y][x];
-			var neighbour = neighbours[i];
-			var neighbourValue = data[neighbour.y][neighbour.x];
-			if (neighbourValue > value && neighbourValue < 9)
+			((x, y), neighbours)
+		};
+
+		for(int i = 0; i < listToTraverse.Count; i++)
+		{
+			var position = listToTraverse[i].position;
+			var value = data[position.y][position.x];
+
+			foreach(var neighbour in listToTraverse[i].neighbours)
 			{
-				visited.Add(neighbour);
-			}
-			if (neighbourValue != 9)
-			{
-				TraverseBasin(data, neighbour.x, neighbour.y, visited);
+				var neighbourValue = data[neighbour.y][neighbour.x];
+				if (neighbourValue > value && neighbourValue < 9)
+				{
+					visited.Add(neighbour);
+				}
+				if (neighbourValue != 9)
+				{
+					var next = GetNeighbours(data, neighbour.x, neighbour.y).Except(visited).ToList();
+					if(next.Count > 0)
+					{
+						listToTraverse.Add((neighbour, next));
+					}
+				}
 			}
 		}
 	}
