@@ -31,27 +31,15 @@ public class Day09 : BaseDay<string[], long>, IDay
 		).ToArray();
 
 		var points = GetDeepestPoints(values);
-
-
-		var count = new List<int>();
-		foreach(var (x, y) in points)
-		{
-			var visited = new HashSet<(int x, int y)>();
-			visited.Add((x, y));
-			GetBasinSize(values, x, y, visited);
-			count.Add(visited.Count());
-		}
-
 		var result = points.Select(point =>
 		{
-			var visited = new HashSet<(int x, int y)>();
-			visited.Add((point.x, point.y));
+			var visited = new HashSet<(int x, int y)>
+			{
+				(point.x, point.y)
+			};
 			GetBasinSize(values, point.x, point.y, visited);
 			return visited.Count;
-		})
-			.OrderByDescending(x => x)
-			.Take(3)
-			.Aggregate(1, (acc, next) => acc *= next);
+		}).OrderByDescending(x => x).Take(3).Aggregate(1, (acc, next) => acc *= next);
 		return result;
 	}
 	public static void GetBasinSize(int[][] data, int x, int y, HashSet<(int x, int y)> visited)
@@ -93,7 +81,7 @@ public class Day09 : BaseDay<string[], long>, IDay
 		{
 			for (int x = 0; x < data[y].Length; x++)
 			{
-				if (TraverseNeighbours(data, x, y, (a,b) => a <= b, out var point))
+				if (TryGetLowPoint(data, x, y, out var point))
 				{
 					points.Add(point);
 				}
@@ -101,12 +89,12 @@ public class Day09 : BaseDay<string[], long>, IDay
 		}
 		return points;
 	}
-	public static bool TraverseNeighbours(int[][] data, int x, int y, Func<int,int, bool> checkFunction, out (int x, int y) points)
+	public static bool TryGetLowPoint(int[][] data, int x, int y, out (int x, int y) points)
 	{
 		var value = data[y][x];
 		points = (0, 0);
 
-		if(GetNeighbours(data, x, y).Any(point => checkFunction(data[point.y][point.x], value)))
+		if(GetNeighbours(data, x, y).Any(point => data[point.y][point.x] <= value))
 		{
 			return false;
 		}
