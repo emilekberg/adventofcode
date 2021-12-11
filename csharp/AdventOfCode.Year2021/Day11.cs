@@ -1,4 +1,5 @@
 ﻿using AdventOfCode.Common;
+using AdventOfCode.Common.Grid;
 using System.Text;
 
 namespace AdventOfCode.Year2021;
@@ -19,14 +20,14 @@ public class Day11 : BaseDay<string[], long>, IDay
 		int numFlashes = 0;
 
 		Console.WriteLine($"Before any steps:");
-		Draw(octopuses);
+		GridHelper.PrintToConsole(octopuses);
 
 		for (int step = 0; step < numSteps; step++)
 		{
 			numFlashes += Step(octopuses);
 
 			Console.WriteLine($"After step {step + 1}:");
-			Draw(octopuses);
+			GridHelper.PrintToConsole(octopuses);
 		}
 		return numFlashes;
 	}
@@ -38,8 +39,6 @@ public class Day11 : BaseDay<string[], long>, IDay
 				.Select(y => (int)char.GetNumericValue(y))
 				.ToArray()
 			).ToArray();
-		Console.WriteLine($"Before any steps:");
-		Draw(octopuses);
 		int step = 0;
 		do
 		{
@@ -105,31 +104,9 @@ public class Day11 : BaseDay<string[], long>, IDay
 	}
 	public static List<(int x, int y)> GetAdjacent(int x, int y, int width, int height)
 	{
-		var result = new List<(int x, int y)>
-		{
-			(-1, -1), (0, -1), (1, -1),
-			(-1, 0),           (1, 0),
-			(-1, 1),  (0, 1),  (1, 1)
-		}.Select(pos => (pos.x + x, pos.y + y))
-		.Where(pos => pos.Item1 >= 0 && pos.Item1 < width && pos.Item2 >= 0 && pos.Item2 < height)
-		.ToList();
-		return result;
-	}
-	public static void Draw(int[][] octopuses)
-	{
-		var height = octopuses.Length;
-		var width = octopuses[0].Length;
-		var sb = new StringBuilder();
-		for (int y = 0; y < height; y++)
-		{
-			for (int x = 0; x < width; x++)
-			{
-				sb.Append(octopuses[y][x]);
-			}
-			sb.AppendLine();
-		}
-
-
-		Console.WriteLine(sb.ToString());
+		return GridHelper.GetRelativeAdjacentPositions()
+			.Select(pos => (x + pos.x, y + pos.y))
+			.Where(pos => pos.Item1 >= 0 && pos.Item1 < width && pos.Item2 >= 0 && pos.Item2 < height)
+			.ToList();
 	}
 }
