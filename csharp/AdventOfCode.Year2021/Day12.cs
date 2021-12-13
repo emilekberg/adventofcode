@@ -30,32 +30,41 @@ public class Day12 : BaseDay<string[], long>, IDay
 	}
 	public override long Part1(string[] input)
 	{
+		Console.WriteLine("part 1");
+		Console.WriteLine("");
 		var paths = ParseInput(input);
-
+		var unique = paths.Values.SelectMany(x => x).Distinct().ToList();
+		var passed = unique.ToDictionary(x => x, _ => 0);
+		passed["start"]++;
 		var count = 0;
 		foreach(var node in paths["start"])
 		{
-			count += Traverse(node, paths, new List<string> { "start" });
+			count += Traverse(node, paths, new Dictionary<string, int>(passed));
 		}
-
 		return count;
 	}
 	public override long Part2(string[] input)
 	{
+		Console.WriteLine("");
+		Console.WriteLine("");
+		Console.WriteLine("part 1");
+		Console.WriteLine("");
 		var paths = ParseInput(input);
+		var unique = paths.Values.SelectMany(x => x).Distinct().ToList();
+		var passed = unique.ToDictionary(x => x, _ => 0);
+		
 
 		var count = 0;
 		foreach (var node in paths["start"])
 		{
-			count += Traverse(node, paths, new List<string> { "start" });
+			count += Traverse2(node, paths, new List<string> { "start" });
 		}
-
 		return count;
 	}
 
-	public static int Traverse(string node, Dictionary<string, List<string>> paths, List<string> passed)
+	public static int Traverse(string node, Dictionary<string, List<string>> paths, Dictionary<string, int> passed)
 	{
-		passed.Add(node);
+		passed[node]++;
 		if (node == "end")
 		{
 			Console.WriteLine(string.Join(',', passed));
@@ -63,13 +72,40 @@ public class Day12 : BaseDay<string[], long>, IDay
 		}
 		var count = 0;
 		var possiblePaths = paths[node]
-			.Where(x => IsBigCave(x) || !passed.Contains(x))
+			.Where(x => IsBigCave(x) || passed[x] == 0)
 			.ToList();
 		
 		foreach (var path in possiblePaths)
 		{
-			var set = passed.ToList();
-			count += Traverse(path, paths, set);
+			var passedCopy = new Dictionary<string, int>(passed);
+			count += Traverse(path, paths, passedCopy);
+		}
+		return count;
+	}
+	public static int Traverse2(string node, Dictionary<string, List<string>> paths, List<string> passed)
+	{
+		passed.Add(node);
+		if (node == "end")
+		{
+			Console.WriteLine(string.Join(',', passed));
+			return 1;
+		}
+		var passedGroups = passed
+			.Where(x => x != "start" || x != "end")
+			.GroupBy(x => x)
+			.ToDictionary(x => x.Key, x => x.Count());
+		var passedSmallCaveTwice = passedGroups.Any(group => IsSmallCave(group.Key) && group.Value == 2);
+
+		var count = 0;
+		var possiblePaths = paths[node]
+			.Where(x => x != "start")
+			.Where(x => IsBigCave(x) || !(passedGroups.ContainsKey(x)) || (passedSmallCaveTwice ? passedGroups[x] == 0 : passedGroups[x] <= 2))
+			.ToList();
+
+		foreach (var path in possiblePaths)
+		{
+			var passedCopy = passed.ToList();
+			count += Traverse2(path, paths, passedCopy);
 		}
 		return count;
 	}
