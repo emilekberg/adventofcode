@@ -8,11 +8,17 @@ namespace AdventOfCode.Year2021;
 /// </Summary> 
 public class Day14 : BaseDay<string[], long>, IDay
 {
-	public static (string data, Dictionary<string, char> lookup) Parse(string[] input)
+	public static (Dictionary<string, long>, Dictionary<string, char> lookup) Parse(string[] input)
 	{
 		var data = input.First();
 		var lookup = input.Skip(2).Select(x => x.Split(" -> ")).ToDictionary(x => x[0], x => x[1].First());
-		return (data, lookup);
+
+		var pairs = data
+			.Zip(data.Skip(1))
+			.Select(x => "" + x.First + x.Second)
+			.GroupBy(x => x)
+			.ToDictionary(x => x.Key, x => (long)x.Count());
+		return (pairs, lookup);
 	}
 	public override long Part1(string[] input)
 	{
@@ -24,36 +30,43 @@ public class Day14 : BaseDay<string[], long>, IDay
 	}
 	public static long Process(string[] input, int iterations)
 	{
-		var (data, lookup) = Parse(input);
-		var iteratedData = data;
+		var (pairs, lookup) = Parse(input);
 		for (int i = 0; i < iterations; i++)
 		{
-			iteratedData = Iterate(iteratedData, lookup);
+			pairs = Iterate(pairs, lookup);
 		}
 
-		var groups = iteratedData.ToCharArray().GroupBy(x => x);
+		var target = new Dictionary<char, long>();
+		foreach(var pair in pairs)
+		{
+			target.TryAdd(pair.Key[1], 0);
+			target[pair.Key[1]] += pair.Value;
+		}
 
-		long min = groups.Min(x => x.Count());
-		long max = groups.Max(x => x.Count());
+		long min = target.Values.Min(x => x);
+		long max = target.Values.Max(x => x);
 
 		return max - min;
 	}
 
-	public static string Iterate(string data, Dictionary<string, char> lookup)
+	public static Dictionary<string, long> Iterate(Dictionary<string, long> pairs, Dictionary<string, char> lookup)
 	{
-		var sb = new StringBuilder();
-		for(int i = 1; i < data.Length; i++)
-		{
-			var prev = data[i - 1];
-			var current = data[i];
-			var key = "" + prev + current;
-			var insert = lookup[key];
+		var newPairs = new Dictionary<string, long>();
 
-			sb.Append(prev);
-			sb.Append(insert);
+		foreach(var pair in pairs)
+		{
+			var first = pair.Key[0];
+			var second = pair.Key[1];
+			var elementToAdd = lookup[pair.Key];
+			
+			var pairA = "" + first + elementToAdd;
+			var pairB = "" + elementToAdd + second;
+
+			newPairs.TryAdd(pairA, 0);
+			newPairs[pairA] += pair.Value;
+			newPairs.TryAdd(pairB, 0);
+			newPairs[pairB] += pair.Value;
 		}
-		sb.Append(data.Last());
-		var result = sb.ToString();
-		return result;
+		return newPairs;
 	}
 }
