@@ -8,7 +8,7 @@ namespace AdventOfCode.Year2021;
 /// </Summary> 
 public class Day12 : BaseDay<string[], long>, IDay
 {
-	public Dictionary<string, List<string>> ParseInput(string[] input)
+	public static Dictionary<string, List<string>> ParseInput(string[] input)
 	{
 		var nodes = input.Select(nodes => nodes.Split('-')).ToList();
 
@@ -30,82 +30,47 @@ public class Day12 : BaseDay<string[], long>, IDay
 	}
 	public override long Part1(string[] input)
 	{
-		Console.WriteLine("part 1");
-		Console.WriteLine("");
-		var paths = ParseInput(input);
-		var unique = paths.Values.SelectMany(x => x).Distinct().ToList();
-		var passed = unique.ToDictionary(x => x, _ => 0);
-		passed["start"]++;
-		var count = 0;
-		foreach(var node in paths["start"])
-		{
-			count += Traverse(node, paths, new Dictionary<string, int>(passed));
-		}
-		return count;
+		return Process(input, false);
 	}
 	public override long Part2(string[] input)
 	{
-		Console.WriteLine("");
-		Console.WriteLine("");
-		Console.WriteLine("part 1");
-		Console.WriteLine("");
+		return Process(input, true);
+	}
+	public static long Process(string[] input, bool allowPassSmallCaveTwice)
+	{
 		var paths = ParseInput(input);
 		var unique = paths.Values.SelectMany(x => x).Distinct().ToList();
 		var passed = unique.ToDictionary(x => x, _ => 0);
-		
+
 
 		var count = 0;
 		foreach (var node in paths["start"])
 		{
-			count += Traverse2(node, paths, new List<string> { "start" });
+			var copy = new Dictionary<string, int>(passed);
+			count += Traverse(node, paths, copy, allowPassSmallCaveTwice);
 		}
 		return count;
 	}
-
-	public static int Traverse(string node, Dictionary<string, List<string>> paths, Dictionary<string, int> passed)
+	public static int Traverse(string node, Dictionary<string, List<string>> paths, Dictionary<string, int> passed, bool allowSmallCaveTwice)
 	{
 		passed[node]++;
 		if (node == "end")
 		{
-			Console.WriteLine(string.Join(',', passed));
 			return 1;
 		}
-		var count = 0;
-		var possiblePaths = paths[node]
-			.Where(x => IsBigCave(x) || passed[x] == 0)
-			.ToList();
-		
-		foreach (var path in possiblePaths)
-		{
-			var passedCopy = new Dictionary<string, int>(passed);
-			count += Traverse(path, paths, passedCopy);
-		}
-		return count;
-	}
-	public static int Traverse2(string node, Dictionary<string, List<string>> paths, List<string> passed)
-	{
-		passed.Add(node);
-		if (node == "end")
-		{
-			Console.WriteLine(string.Join(',', passed));
-			return 1;
-		}
-		var passedGroups = passed
-			.Where(x => x != "start" || x != "end")
-			.GroupBy(x => x)
-			.ToDictionary(x => x.Key, x => x.Count());
-		var passedSmallCaveTwice = passedGroups.Any(group => IsSmallCave(group.Key) && group.Value == 2);
+		var hasPassedSmallCaveTwice = passed.Any(group => IsSmallCave(group.Key) && group.Value == 2);
+		var canPassSmallCaveTwice = allowSmallCaveTwice && !hasPassedSmallCaveTwice;
 
 		var count = 0;
 		var possiblePaths = paths[node]
 			.Where(x => x != "start")
-			.Where(x => IsBigCave(x) || !(passedGroups.ContainsKey(x)) || (passedSmallCaveTwice ? passedGroups[x] == 0 : passedGroups[x] <= 2))
+			.Where(x => IsBigCave(x) || (canPassSmallCaveTwice ? passed[x] <= 2 : passed[x] == 0))
 			.ToList();
 
 		foreach (var path in possiblePaths)
 		{
-			var passedCopy = passed.ToList();
-			count += Traverse2(path, paths, passedCopy);
+			var passedCopy = new Dictionary<string, int>(passed);
+			count += Traverse(path, paths, passedCopy, allowSmallCaveTwice);
 		}
 		return count;
 	}
