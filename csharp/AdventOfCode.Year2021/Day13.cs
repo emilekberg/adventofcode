@@ -41,9 +41,10 @@ public class Day13 : BaseDay<string[], long>, IDay
 	}
 	public static List<(int x, int y)> FoldPaper(List<(int x, int y)> dots, IEnumerable<(string axis, int amount)> instructions)
 	{
+		IEnumerable<(int x, int y)> enumerableDots = dots;
 		foreach (var (axis, amount) in instructions)
 		{
-			dots = dots.Select(dot =>
+			enumerableDots = enumerableDots.Select(dot =>
 			{
 				if (axis == "x" && dot.x > amount)
 				{
@@ -54,9 +55,9 @@ public class Day13 : BaseDay<string[], long>, IDay
 					dot.y = 2 * amount - dot.y;
 				}
 				return dot;
-			}).Distinct().ToList();
+			}).Distinct();
 		}
-		return dots;
+		return enumerableDots.ToList();
 	}
 
 	public static void Print(List<(int x, int y)> dots)
