@@ -36,15 +36,15 @@ public class Day14 : BaseDay<string[], long>, IDay
 			pairs = Iterate(pairs, lookup);
 		}
 
-		var target = new Dictionary<char, long>();
+		var polymerCount = new Dictionary<char, long>();
 		foreach(var pair in pairs)
 		{
-			target.TryAdd(pair.Key[1], 0);
-			target[pair.Key[1]] += pair.Value;
+			polymerCount.TryAdd(pair.Key[1], 0);
+			polymerCount[pair.Key[1]] += pair.Value;
 		}
 
-		long min = target.Values.Min(x => x);
-		long max = target.Values.Max(x => x);
+		long min = polymerCount.Values.Min(x => x);
+		long max = polymerCount.Values.Max(x => x);
 
 		return max - min;
 	}
