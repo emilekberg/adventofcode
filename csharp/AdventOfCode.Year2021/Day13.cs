@@ -64,15 +64,14 @@ public class Day13 : BaseDay<string[], long>, IDay
 	{
 		var width = dots.Max(dot => dot.x) + 1;
 		var height = dots.Max(dot => dot.y) + 1;
-		var lookup = dots.ToDictionary(x => x, _ => 1);
+		var lookup = dots.ToHashSet();
 		var sb = new StringBuilder();
 		for (int y = 0; y < height; y++)
 		{
 			sb.AppendLine();
 			for (int x = 0; x < width; x++)
 			{
-				if (!lookup.TryGetValue((x, y), out var dot)) dot = 0; 
-				sb.Append(dot == 1 ? "#" : " ");
+				sb.Append(lookup.Contains((x, y)) ? "#" : " ");
 			}
 		}
 		Console.WriteLine(sb.ToString());

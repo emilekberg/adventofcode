@@ -23,13 +23,21 @@ public static class GridHelper
 		}
 		Console.WriteLine(sb.ToString());
 	}
-	public static List<(int x, int y)> GetRelativeAdjacentPositions()
+	public static List<(int x, int y)> GetAdjacentPositionsWithDiagonals()
 	{
 		var result = new List<(int x, int y)>
 		{
 			(-1, -1), (0, -1), (1, -1),
 			(-1, 0),           (1, 0),
 			(-1, 1),  (0, 1),  (1, 1)
+		};
+		return result;
+	}
+	public static List<(int x, int y)> GetAdjacentPositions()
+	{
+		var result = new List<(int x, int y)>
+		{
+			(0, -1),(-1, 0),(1, 0),	(0, 1)
 		};
 		return result;
 	}

@@ -104,7 +104,7 @@ public class Day11 : BaseDay<string[], long>, IDay
 	}
 	public static List<(int x, int y)> GetAdjacent(int x, int y, int width, int height)
 	{
-		return GridHelper.GetRelativeAdjacentPositions()
+		return GridHelper.GetAdjacentPositionsWithDiagonals()
 			.Select(pos => (x + pos.x, y + pos.y))
 			.Where(pos => pos.Item1 >= 0 && pos.Item1 < width && pos.Item2 >= 0 && pos.Item2 < height)
 			.ToList();
