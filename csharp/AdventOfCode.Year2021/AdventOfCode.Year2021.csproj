@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\Year2021 - Copy.Day15.txt">
+    <None Update="Data\Year2021.Day16.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\Year2021.Day15.txt">

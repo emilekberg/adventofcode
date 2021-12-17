@@ -62,10 +62,6 @@ public class Day15 : BaseDay<string[], long>, IDay
 
 		var openSet = new PriorityQueue<AStarNode, int>();
 		openSet.Enqueue(start, start.Cost);
-		var openHashSet = new HashSet<AStarNode>
-		{ 
-			start
-		};
 
 		var cameFrom = new Dictionary<AStarNode, AStarNode>();
 		var gScore = new DefaultDictionary<AStarNode, int>(int.MaxValue)
@@ -74,7 +70,6 @@ public class Day15 : BaseDay<string[], long>, IDay
 		};
 		while (openSet.TryDequeue(out var current, out var cost))
 		{
-			openHashSet.Remove(current);
 			if (current == end)
 			{
 				// for this task we only want the cost of the path to the last node.
@@ -91,11 +86,7 @@ public class Day15 : BaseDay<string[], long>, IDay
 					gScore[neighbour] = tenativeGScore;
 					
 					var neighbourFScore = tenativeGScore + h(neighbour, end);
-					if (!openHashSet.Contains(neighbour))
-					{
-						openHashSet.Add(neighbour);
-						openSet.Enqueue(neighbour, neighbourFScore);
-					}
+					openSet.Enqueue(neighbour, neighbourFScore);
 				}
 			}
 		}
