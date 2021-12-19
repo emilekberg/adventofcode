@@ -1,4 +1,5 @@
 ﻿using AdventOfCode.Common;
+using System.Buffers.Binary;
 using System.Numerics;
 
 namespace AdventOfCode.Year2021;
@@ -7,15 +8,16 @@ namespace AdventOfCode.Year2021;
 /// </Summary> 
 public class Day16 : BaseDay<string, long>, IDay
 {
-	public static ReadOnlySpan<char> Parse(string input)
+	public static ReadOnlySpan<byte> Parse(string input)
 	{
 		var hexToBitString = (char c) => Convert.ToString(Convert.ToInt16(c.ToString(), 16), 2).PadLeft(4, '0');
-		var a = input.ToCharArray()
+		var data = input.ToCharArray()
 			.Select(c => hexToBitString(c))
 			.SelectMany(x => x)
+			.Select(c => (byte)char.GetNumericValue(c))
 			.ToArray();
 
-		var span = new Span<char>(a);
+		var span = new Span<byte>(data);
 		return span;
 	}
 	public override long Part1(string input)
@@ -34,8 +36,8 @@ public class Day16 : BaseDay<string, long>, IDay
 	}
 	public static (long version, long value) ProcessPacket(ref BitPacket packet)
 	{
-		var version = packet.GetNextInt(3);
-		var typeId = packet.GetNextEnum<PacketType>(3);
+		var version = packet.ReadNextInt(3);
+		var typeId = packet.ReadNextEnum<PacketType>(3);
 		(long version, long value) data = typeId switch
 		{
 			PacketType.Literal => ProcessLiteralPacket(ref packet),
@@ -45,12 +47,12 @@ public class Day16 : BaseDay<string, long>, IDay
 	}
 	public static (long version, long value) ProcessOperatorPacket(ref BitPacket packet, PacketType type)
 	{
-		var lengthTypeId = packet.GetNextInt(1);
+		var lengthTypeId = packet.ReadNextInt(1);
 		var data = new List<(long version, long value)>();
 		switch(lengthTypeId)
 		{
 			case 0:
-				var totalLengthAsBits = packet.GetNextInt(15);
+				var totalLengthAsBits = packet.ReadNextInt(15);
 				var target = packet.GetOffset() + totalLengthAsBits;
 				while(packet.GetOffset() < target)
 				{
@@ -58,7 +60,7 @@ public class Day16 : BaseDay<string, long>, IDay
 				}
 				break;
 			case 1:
-				var numberOfSubPackets = packet.GetNextInt(11);
+				var numberOfSubPackets = packet.ReadNextInt(11);
 				for(int i = 0; i < numberOfSubPackets; i++)
 				{
 					data.Add(ProcessPacket(ref packet));
@@ -73,7 +75,7 @@ public class Day16 : BaseDay<string, long>, IDay
 	{
 		return type switch
 		{
-			PacketType.Sum => data.Aggregate(0L, (acc, next) => acc + next),
+			PacketType.Sum => data.Sum(),
 			PacketType.Product => data.Aggregate(1L, (acc, next) => acc * next),
 			PacketType.Minimum => data.Min(),
 			PacketType.Maximum => data.Max(),
@@ -85,19 +87,26 @@ public class Day16 : BaseDay<string, long>, IDay
 	}
 	public static (long version, long value) ProcessLiteralPacket(ref BitPacket packet)
 	{
-		var data = new List<char>();
-		int keepReadingBit;
+		int keepReading;
+		long result = 0;
 		do
 		{
-			keepReadingBit = packet.GetNextInt(1);
-			var readData = packet.GetNext(4);
-			data.AddRange(readData.ToArray());
+			keepReading = packet.ReadNextInt(1);
+			var bits = packet.GetNext(4);
+			foreach (var bit in bits)
+			{
+				result <<= 1;
+				result += bit;
+			}
 		}
-		while (keepReadingBit == 1);
-		var s = string.Join("", data);
-		long i = Convert.ToInt64(s, 2);
-		return (0, i);
+		while (keepReading == 1);
+		return (0, result);
 	}
+}
+public enum LengthTypeId
+{
+	Length = 0,
+	Count = 1
 }
 public enum PacketType
 {
@@ -112,14 +121,14 @@ public enum PacketType
 }
 public ref struct BitPacket
 {
-	private readonly ReadOnlySpan<char> _span;
+	private readonly ReadOnlySpan<byte> _span;
 	private int _offset = 0;
-	public BitPacket(ReadOnlySpan<char> span)
+	public BitPacket(ReadOnlySpan<byte> span)
 	{
 		_span = span;
 	}
 
-	public ReadOnlySpan<char> GetNext(int size)
+	public ReadOnlySpan<byte> GetNext(int size)
 	{
 		var result = _span.Slice(_offset, size);
 		_offset += size;
@@ -127,23 +136,27 @@ public ref struct BitPacket
 	}
 
 	public int GetOffset() => _offset;
-	public ReadOnlySpan<char> GetSpanCopy() => _span;
 
-	public int GetNextInt(int size)
+	public int ReadNextInt(int size)
 	{
-		var result = _span.Slice(_offset, size);
+		var bits = _span.Slice(_offset, size);
 		_offset += size;
 
-		var digit = Convert.ToInt16(string.Join("", result.ToArray()), 2);
-		return digit;
+		int result = 0;
+		foreach(var bit in bits)
+		{
+			result <<= 1;
+			result += bit;
+		}
+		return result;
 	}
-	public T GetNextEnum<T>(int size) where T : struct, Enum
+	public T ReadNextEnum<T>(int size) where T : struct, Enum
 	{
 		if(!typeof(T).IsEnum)
 		{
 			throw new ArgumentException("Must be an enum", nameof(T));
 		}
-		var result = GetNextInt(3);
+		var result = ReadNextInt(size);
 		return (T)(object)result;
 	}
 }
