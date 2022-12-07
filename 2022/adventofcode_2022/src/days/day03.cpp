@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
-#include "../filehelper.hpp"
+#include "../filehelper.cpp"
 #include <unordered_set>
 
 namespace adventofcode {
@@ -59,8 +59,8 @@ namespace adventofcode {
 
 		static inline void run() {
 			auto lines = readlines("./input/day03.txt");
-			int part01 = adventofcode::day03::part01(lines);
-			int part02 = adventofcode::day03::part02(lines);
+			int part01 = day03::part01(lines);
+			int part02 = day03::part02(lines);
 			std::cout << "day03: " << part01 << ", " << part02 << std::endl;
 		}
 	}

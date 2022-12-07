@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include "../filehelper.hpp"
+#include "../filehelper.cpp"
 
 namespace adventofcode {
 	namespace day01 {
@@ -20,7 +20,7 @@ namespace adventofcode {
 					result = 0;
 					continue;
 				}
-				int toAdd = atoi(input[i].c_str());
+				int toAdd = std::stoi(input[i]);
 				result += toAdd;
 			}
 			return max;
@@ -37,7 +37,7 @@ namespace adventofcode {
 					total = 0;
 					continue;
 				}
-				int toAdd = atoi(input[i].c_str());
+				int toAdd = std::stoi(input[i]);
 				total += toAdd;
 			}
 
@@ -50,8 +50,8 @@ namespace adventofcode {
 
 		static inline void run() {
 			auto lines = readlines("./input/day01.txt");
-			int part01 = adventofcode::day01::part01(lines);
-			int part02 = adventofcode::day01::part02(lines);
+			int part01 = day01::part01(lines);
+			int part02 = day01::part02(lines);
 			std::cout << "day01: " << part01 << ", " << part02 << std::endl;
 		}
 	}

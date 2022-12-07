@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
-#include "../filehelper.hpp"
+#include "../filehelper.cpp"
 #include <unordered_set>
 #include <stack>
 #include <unordered_map>
@@ -21,7 +21,7 @@ namespace adventofcode {
 			size_t setupEndRow = it - input.begin();
 
 			for (int row = setupEndRow; row >= 0; row--) {
-				for (int col = 0; col < input[row].size(); col += 4) {
+				for (size_t col = 0; col < input[row].size(); col += 4) {
 					size_t stack = col / 4 + 1;
 					if (!stacks.contains(stack)) {
 						stacks.insert_or_assign(stack, std::stack<char>());
@@ -35,14 +35,13 @@ namespace adventofcode {
 
 			std::regex re("move (\\d+) from (\\d+) to (\\d+)");
 			for (size_t line = setupEndRow + 1; line < input.size(); line++) {
-
 				std::smatch matches;
 				if (!std::regex_search(input[line], matches, re)) {
 					continue;
 				}
-				int numToMove = atoi(matches[1].str().c_str());
-				int fromStack = atoi(matches[2].str().c_str());
-				int toStack = atoi(matches[3].str().c_str());
+				int numToMove = std::stoi(matches[1].str());
+				int fromStack = std::stoi(matches[2].str());
+				int toStack = std::stoi(matches[3].str());
 
 				std::deque<char> tempQueue;
 				for (int i = 0; i < numToMove; i++) {
@@ -55,9 +54,8 @@ namespace adventofcode {
 				}
 				
 				do {
-					char c = tempQueue.back();
+					stacks[toStack].push(tempQueue.back());
 					tempQueue.pop_back();
-					stacks[toStack].push(c);
 				} while (tempQueue.size() > 0);
 			}
 			std::string result;

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
-#include "../filehelper.hpp"
+#include "../filehelper.cpp"
 #include <unordered_set>
 
 namespace adventofcode {
@@ -33,7 +33,7 @@ namespace adventofcode {
 			std::string lhs = input.substr(0, splitIndex);
 			std::string rhs = input.substr(splitIndex + 1);
 
-			return range(atoi(lhs.c_str()), atoi(rhs.c_str()));
+			return range(std::stoi(lhs), std::stoi(rhs));
 		}
 
 		static inline int solve(std::vector<std::string> input, mode mode) {
@@ -70,8 +70,8 @@ namespace adventofcode {
 
 		static inline void run() {
 			auto lines = readlines("./input/day04.txt");
-			int part01 = adventofcode::day04::part01(lines);
-			int part02 = adventofcode::day04::part02(lines);
+			int part01 = day04::part01(lines);
+			int part02 = day04::part02(lines);
 			std::cout << "day04: " << part01 << ", " << part02 << std::endl;
 		}
 	}

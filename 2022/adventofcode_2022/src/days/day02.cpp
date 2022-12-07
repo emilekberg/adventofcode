@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include "../filehelper.hpp"
+#include "../filehelper.cpp"
 
 namespace adventofcode {
 	namespace day02 {
@@ -69,8 +69,8 @@ namespace adventofcode {
 
 		static inline void run() {
 			auto lines = readlines("./input/day02.txt");
-			int part01 = adventofcode::day02::part01(lines);
-			int part02 = adventofcode::day02::part02(lines);
+			int part01 = day02::part01(lines);
+			int part02 = day02::part02(lines);
 			std::cout << "day02: " << part01 << ", " << part02 << std::endl;
 		}
 	}

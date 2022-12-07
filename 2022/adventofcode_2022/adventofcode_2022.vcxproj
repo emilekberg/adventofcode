@@ -19,9 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\days\day01.hpp" />
+    <ClCompile Include="src\days\day01.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\string-helper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="input\day01.txt" />
@@ -29,13 +28,19 @@
     <Text Include="input\day03.txt" />
     <Text Include="input\day04.txt" />
     <Text Include="input\day05.txt" />
+    <Text Include="input\day06.txt" />
+    <Text Include="input\day07.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\days\day02.hpp" />
-    <ClInclude Include="src\days\day03.hpp" />
-    <ClInclude Include="src\days\day04.hpp" />
-    <ClInclude Include="src\days\day05.hpp" />
-    <ClInclude Include="src\filehelper.hpp" />
+    <ClInclude Include="src\days\day02.cpp" />
+    <ClInclude Include="src\days\day03.cpp" />
+    <ClInclude Include="src\days\day04.cpp" />
+    <ClInclude Include="src\days\day05.cpp" />
+    <ClInclude Include="src\days\day06.cpp" />
+    <ClInclude Include="src\days\day07.cpp" />
+    <ClInclude Include="src\filehelper.cpp" />
+    <ClInclude Include="src\stringutils.cpp" />
+    <ClInclude Include="src\timehelper.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
